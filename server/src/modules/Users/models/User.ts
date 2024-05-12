@@ -14,10 +14,10 @@ User.init({
         autoIncrement: true,
         primaryKey: true,
     },
-    username: {  // Updated field name here
+    username: {
         type: DataTypes.STRING(128),
         allowNull: false,
-        unique: true, // Ensuring username is unique
+        unique: true,
     },
     email: {
         type: DataTypes.STRING(128),
@@ -27,10 +27,76 @@ User.init({
     password: {
         type: DataTypes.STRING(128),
         allowNull: false,
-    }
+    },
+    contact_number: {
+        type: DataTypes.STRING(20),
+        allowNull: true,
+    },
+    country: {
+        type: DataTypes.STRING(128),
+        allowNull: true,
+    },
+    seller: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+    },
+    user_access_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    followers: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    following: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    stars: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    reviews: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    is_admin: {
+        type: DataTypes.BOOLEAN,
+        // allowNull: true,
+        defaultValue: false,
+    },
+    deleted: {
+        type: DataTypes.BOOLEAN,
+        // allowNull: true,
+        defaultValue: false,
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    deleted_by: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    created_by: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    updated_by: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
 }, {
     tableName: 'users',
-    sequelize: sequelize, // passing the `sequelize` instance is necessary here
-    timestamps: true,     // indicates if Sequelize should handle `createdAt` and `updatedAt` fields
-    underscored: true,    // indicates if field names should be snake_cased
+    sequelize: sequelize,
+    timestamps: true,
+    underscored: true,
 });

@@ -11,7 +11,8 @@ interface User {
   following?: number;
   stars?: number;
   reviews?: number;
-  delete?: boolean;
+  is_admin:boolean;
+  deleted: boolean;
   deleted_at?: Date;
   deleted_by?: number;
   created_at: Date;

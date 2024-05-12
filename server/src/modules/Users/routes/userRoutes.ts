@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { createUserHandler, loginUserHandler, registrationHandle } from '../controllers/UserController';
-import { authenticateToken } from '../middlewares/authMiddleware';
+import { authenticateToken } from '../../../middlewares/authMiddleware';
 import { body } from 'express-validator';
 
 
