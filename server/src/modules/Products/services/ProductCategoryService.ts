@@ -1,4 +1,4 @@
-import { ProductCategory } from '../Models/ProductCategory';
+import { ProductCategory } from '../models/ProductCategory';
 import { IProductCategory } from '../interfaces/IProductCategory';
 
 

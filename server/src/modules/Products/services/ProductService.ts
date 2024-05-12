@@ -1,10 +1,16 @@
-import {Product} from '../models/Product';
+import {Product,ProductCreationAttributes} from '../models/Product';
 import {IProduct} from '../interfaces/IProduct';
+import {Request} from 'express';
+
 
 class ProductService {
-  async createProduct(productDetails: IProduct): Promise<Product> {
+  async createProduct(req:Request|null,productDetails: ProductCreationAttributes): Promise<Product> {
     try {
-      const product = await Product.create(productDetails);
+      let user_id = null;
+      if((req as any).user){
+        user_id = (req as any).user.id;
+      }
+      const product = await Product.create({...productDetails, status: 'active',seller_id: user_id});
       return product;
     } catch (error) {
       throw new Error('Error creating the product');
@@ -56,4 +62,4 @@ class ProductService {
   }
 }
 
-export default ProductService;
+export default new ProductService();

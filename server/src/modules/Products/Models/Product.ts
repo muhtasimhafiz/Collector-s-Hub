@@ -3,7 +3,7 @@ import { sequelize } from '../../../../config/database';
 import { IProduct } from '../interfaces/IProduct';
 import { ProductCategory } from './ProductCategory';
 
-export type ProductCreationAttributes = Optional<IProduct, 'id'>;
+export type ProductCreationAttributes = Optional<IProduct, 'id'|'status'|'bidding'|'ratings'|'quantity'|'currency'|'created_by'|'updated_by'|'deleted'>;
 export class Product extends Model<IProduct, ProductCreationAttributes> {
   public id!: number;
   public name!: string;
@@ -51,10 +51,6 @@ Product.init({
   },
   quantity: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  categories: {
-    type: DataTypes.ARRAY(DataTypes.INTEGER),
     allowNull: false,
   },
   currency: {
