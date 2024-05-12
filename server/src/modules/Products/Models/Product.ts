@@ -3,6 +3,8 @@ import { sequelize } from '../../../../config/database';
 import { IProduct } from '../interfaces/IProduct';
 import { ProductCategory } from './ProductCategory';
 import { ProductJoinCategory } from './ProductJoinCategory';
+import { User } from '../../Users/models/User';
+import { ProductReview } from './ProductReview';
 
 export type ProductCreationAttributes = Optional<IProduct, 'id'|'status'|'bidding'|'ratings'|'quantity'|'currency'|'created_by'|'updated_by'|'deleted'>;
 export class Product extends Model<IProduct, ProductCreationAttributes> {
@@ -98,6 +100,16 @@ Product.belongsToMany(ProductCategory, {
   through: ProductJoinCategory,
   foreignKey: 'product_id',
   otherKey: 'category_id'
+});
+
+Product.belongsTo(User, {
+  foreignKey: 'seller_id',
+  as: 'seller'
+});
+
+Product.hasMany(ProductReview,{
+  foreignKey: 'product_id',
+  as: 'reviews'
 });
 
 // Product.belongsToMany(ProductCategory, { through: ProductJoinCategory });
