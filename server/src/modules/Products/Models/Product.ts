@@ -2,6 +2,7 @@ import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '../../../../config/database'; 
 import { IProduct } from '../interfaces/IProduct';
 import { ProductCategory } from './ProductCategory';
+import { ProductJoinCategory } from './ProductJoinCategory';
 
 export type ProductCreationAttributes = Optional<IProduct, 'id'|'status'|'bidding'|'ratings'|'quantity'|'currency'|'created_by'|'updated_by'|'deleted'>;
 export class Product extends Model<IProduct, ProductCreationAttributes> {
@@ -93,3 +94,10 @@ Product.init({
   modelName: 'Product',
 });
 
+Product.belongsToMany(ProductCategory, {
+  through: ProductJoinCategory,
+  foreignKey: 'product_id',
+  otherKey: 'category_id'
+});
+
+// Product.belongsToMany(ProductCategory, { through: ProductJoinCategory });

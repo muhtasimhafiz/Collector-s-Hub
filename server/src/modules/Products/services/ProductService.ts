@@ -1,6 +1,7 @@
 import {Product,ProductCreationAttributes} from '../models/Product';
 import {IProduct} from '../interfaces/IProduct';
 import {Request} from 'express';
+import { ProductCategory } from '../models/ProductCategory';
 
 
 class ProductService {
@@ -27,10 +28,23 @@ class ProductService {
   }
 
   async getProductById(productId: number): Promise<Product | null> {
+   console.log('getProductById');
     try {
-      const product = await Product.findByPk(productId);
+      
+      const product = await Product.findByPk(productId,
+        {
+          include: [
+            {
+              model: ProductCategory,
+              through: { attributes: [] }, // This will skip the join table attributes
+            }
+          ]
+        }
+      );
       return product;
-    } catch (error) {
+    } catch (error:any) {
+      console.log(error.message)
+
       throw new Error('Error retrieving product');
     }
   }
