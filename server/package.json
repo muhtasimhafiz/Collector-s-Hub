@@ -26,6 +26,7 @@
     "@clerk/clerk-js": "^5.2.4",
     "@clerk/clerk-sdk-node": "^5.0.5",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.5",

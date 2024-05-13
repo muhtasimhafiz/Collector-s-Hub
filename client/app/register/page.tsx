@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useEffect, useState } from "react";
-import { login } from "../../Services/auth/authService";
+import { login, register } from "../../Services/auth/authService";
 import { redirect, usePathname, useRouter } from "next/navigation";
 
 const formSchema = z.object({
@@ -36,7 +36,13 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: "Password must be at least 6 characters long",
   }),
+  confirmPassword: z.string(),
+  email: z.string().email(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
+;
 
 export default function Page() {
   const form = useForm({
@@ -44,6 +50,8 @@ export default function Page() {
     defaultValues: {
       username: "",
       password: "",
+      email: "",
+      confirmPassword: "",
     },
   });
   const [isMounted, setIsMounted] = useState(false);
@@ -54,7 +62,7 @@ export default function Page() {
     animationData: loader,
     loop: open == true ? false : true,
   };
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -68,16 +76,22 @@ export default function Page() {
     // event.preventDefault();
     try {
       setLoading(true);
-      const data = await login(values.username, values.password);
+      const data = await register({
+        username: values.username,
+        password: values.password,
+        email: values.email,
+      });
       console.log(console.log(data));
       setOpen(false);
       setLoading(false);
-      router.push('/register')    
+      router.push("/");
     } catch (error: any) {
       setLoading(false);
       console.log(error.message);
     }
   };
+
+
   return (
     <div>
       {loading ? (
@@ -87,6 +101,7 @@ export default function Page() {
       ) : (
         // Your form goes here
         <Dialog open={open}>
+          <DialogTrigger></DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Login</DialogTitle>
@@ -102,6 +117,19 @@ export default function Page() {
                       <FormLabel>Username</FormLabel>
                       <FormControl>
                         <Input placeholder="username" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -125,37 +153,29 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Confirm password"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription></FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
                 <Button type="submit">Submit</Button>
+                </DialogFooter>
               </form>
             </Form>
-            {/* <form action="">
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Username
-                </Label>
-                <Input
-                  id="username"
-                  defaultValue="Pedro Duarte"
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="username" className="text-right">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  defaultValue="@peduarte"
-                  className="col-span-3"
-                  type="password"
-                />
-              </div>
-            </div>
-          </form> */}
-            {/* <DialogFooter>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter> */}
           </DialogContent>
         </Dialog>
       )}

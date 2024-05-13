@@ -2,6 +2,7 @@ import { User } from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+
 // Function to generate JWT
 const generateToken = (user: { id: number; username: string; email: string }) => {
     return jwt.sign(
@@ -28,9 +29,13 @@ export const loginUser = async (username: string, password: string) => {
 const saltRounds = 10; // The cost factor for hashing passwords.
 
 // Create a new user
-export const createUser = async (userData: { username: string; email: string; password: string }): Promise<User> => {
+export const createUser = async (userData:Partial<User>): Promise<User> => {
     try {
-        const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+        const check = await findUserByEmailOrUsername(userData.email!, userData.username!);
+        if (check) {
+            throw new Error("Username or email already exists");
+        }
+        const hashedPassword = await bcrypt.hash(userData.password!, saltRounds);
         const user = await User.create({
             ...userData,
             password: hashedPassword

@@ -23,8 +23,11 @@ config({
     path: path.resolve(__dirname, '.env')
 });
 
+const cors = require('cors');
+
 
 const app: Application = express();
+app.use(cors());
 const port = process.env.PORT || 4200;
 
 

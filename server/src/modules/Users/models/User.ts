@@ -78,18 +78,12 @@ User.init({
         type: DataTypes.INTEGER,
         allowNull: true,
     },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
+
     created_by: {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
-    updated_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
+
     updated_by: {
         type: DataTypes.INTEGER,
         allowNull: true,
