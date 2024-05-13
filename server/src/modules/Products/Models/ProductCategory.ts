@@ -64,5 +64,6 @@ ProductCategory.init({
   tableName: 'product_categories',
   timestamps: true,
   underscored: true,
+  paranoid: true,
   modelName: 'ProductCategory',
 });

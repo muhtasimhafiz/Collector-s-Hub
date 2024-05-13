@@ -34,6 +34,7 @@ ProductJoinCategory.init(
   },
   {
     sequelize,
+    paranoid: true,
     tableName: "products_join_categories",
     modelName: "ProductJoinCategory",
     timestamps: false,

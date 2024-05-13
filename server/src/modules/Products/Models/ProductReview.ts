@@ -75,6 +75,7 @@ ProductReview.init({
   modelName: 'ProductReview',
   tableName: 'product_reviews',
   timestamps: false,
+  paranoid: true,
   defaultScope: {
     where: { deleted: false }
   },
@@ -85,7 +86,7 @@ ProductReview.init({
   },
 })
 
-ProductReview.belongsTo(Product, {
-  foreignKey: 'product_id',
-  as : 'product'
-});
+// ProductReview.belongsTo(Product, {
+//   foreignKey: 'product_id',
+//   as : 'product'
+// });
