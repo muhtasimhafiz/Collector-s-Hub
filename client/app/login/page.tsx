@@ -28,6 +28,7 @@ import {
 import { useEffect, useState } from "react";
 import { login } from "../../Services/auth/authService";
 import { redirect, usePathname, useRouter } from "next/navigation";
+import RegisterComponent from "../register/page";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -49,12 +50,13 @@ export default function Page() {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(true);
+  const [isRegistered, setIsRegistered] = useState(false);
   const pathname = usePathname();
   const loaderOption = {
     animationData: loader,
     loop: open == true ? false : true,
   };
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -62,6 +64,16 @@ export default function Page() {
 
   if (!isMounted) {
     return null;
+  }
+
+  const switchtoLogin = () => {
+    if (isRegistered) {
+      setIsRegistered(false);
+    }
+
+    if (!open) {
+      setOpen(true);
+    }
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -72,7 +84,7 @@ export default function Page() {
       console.log(console.log(data));
       setOpen(false);
       setLoading(false);
-      router.push('/register')    
+      router.push("/register");
     } catch (error: any) {
       setLoading(false);
       console.log(error.message);
@@ -80,17 +92,16 @@ export default function Page() {
   };
   return (
     <div>
-      {loading ? (
+      {loading == true ? (
         <div>
           <Lottie animationData={loader} loop={loading} />
         </div>
       ) : (
         // Your form goes here
-        <Dialog open={open}>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Login</DialogTitle>
-              <DialogDescription>Login</DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -125,40 +136,26 @@ export default function Page() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Submit</Button>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      setIsRegistered(true);
+                    }}
+                  >
+                    Register
+                  </Button>
+                  <hr />
+                  <Button type="submit">Submit</Button>
+                </DialogFooter>
               </form>
             </Form>
-            {/* <form action="">
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Username
-                </Label>
-                <Input
-                  id="username"
-                  defaultValue="Pedro Duarte"
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="username" className="text-right">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  defaultValue="@peduarte"
-                  className="col-span-3"
-                  type="password"
-                />
-              </div>
-            </div>
-          </form> */}
-            {/* <DialogFooter>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter> */}
           </DialogContent>
         </Dialog>
       )}
+
+      {isRegistered == true ? <RegisterComponent switchToLogin={switchtoLogin} /> : null}
     </div>
   );
 }

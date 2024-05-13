@@ -29,22 +29,26 @@ import { useEffect, useState } from "react";
 import { login, register } from "../../Services/auth/authService";
 import { redirect, usePathname, useRouter } from "next/navigation";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters long",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters long",
-  }),
-  confirmPassword: z.string(),
-  email: z.string().email(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
-;
+const formSchema = z
+  .object({
+    username: z.string().min(2, {
+      message: "Username must be at least 2 characters long",
+    }),
+    password: z.string().min(6, {
+      message: "Password must be at least 6 characters long",
+    }),
+    confirmPassword: z.string(),
+    email: z.string().email(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+type PageProps = {
+  switchToLogin?: () => void;
+};
 
-export default function Page() {
+export default function Page({ switchToLogin }: PageProps) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -91,7 +95,6 @@ export default function Page() {
     }
   };
 
-
   return (
     <div>
       {loading ? (
@@ -100,12 +103,11 @@ export default function Page() {
         </div>
       ) : (
         // Your form goes here
-        <Dialog open={open}>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger></DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Login</DialogTitle>
-              <DialogDescription>Login</DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -172,7 +174,13 @@ export default function Page() {
                   )}
                 />
                 <DialogFooter>
-                <Button type="submit">Submit</Button>
+                  {switchToLogin && (
+                    <>
+                      <Button onClick={switchToLogin}>Login</Button>
+                      <hr />
+                    </>
+                  )}
+                  <Button type="submit">Submit</Button>
                 </DialogFooter>
               </form>
             </Form>
