@@ -1,5 +1,7 @@
 // Call the registration API
 
+import { AuthContext } from "@/hooks/auth/AuthProvider";
+
 const url = 'http://localhost:4200';
 export async function register(userData:{email:string, password:string,username:string}) {
   const response = await fetch(url+'/api/register', {
@@ -33,5 +35,6 @@ export async function login(username:string, password:string) {
   }
 
   const data = await response.json();
+
   return data;
 }

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { any, z } from "zod";
+import { any, set, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -25,10 +25,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useEffect, useState } from "react";
-import { login } from "../../Services/auth/authService";
+import { useContext, useEffect, useState } from "react";
+import { login as loginHandler } from "../../Services/auth/authService";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import RegisterComponent from "../register/page";
+import { AuthContext } from "@/hooks/auth/AuthProvider";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -52,10 +53,8 @@ export default function Page() {
   const [open, setOpen] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false);
   const pathname = usePathname();
-  const loaderOption = {
-    animationData: loader,
-    loop: open == true ? false : true,
-  };
+  const { login, user } = useContext(AuthContext);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -74,22 +73,29 @@ export default function Page() {
     if (!open) {
       setOpen(true);
     }
-  }
+  };
 
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // event.preventDefault();
     try {
       setLoading(true);
-      const data = await login(values.username, values.password);
-      console.log(console.log(data));
-      setOpen(false);
+      const data = await loginHandler(values.username, values.password);
+      login(data.user, data.token);
+      // if in login page keep the modal open
+      if (pathname == "/login") {
+        router.push("/");
+        setOpen(true);
+      } else {
+        setOpen(false);
+      }
       setLoading(false);
-      router.push("/register");
     } catch (error: any) {
       setLoading(false);
       console.log(error.message);
     }
   };
+
   return (
     <div>
       {loading == true ? (
@@ -98,7 +104,10 @@ export default function Page() {
         </div>
       ) : (
         // Your form goes here
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog
+          open={open}
+          onOpenChange={pathname != "/login" ? setOpen : undefined}
+        >
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Login</DialogTitle>
@@ -155,7 +164,9 @@ export default function Page() {
         </Dialog>
       )}
 
-      {isRegistered == true ? <RegisterComponent switchToLogin={switchtoLogin} /> : null}
+      {isRegistered == true ? (
+        <RegisterComponent switchToLogin={switchtoLogin} />
+      ) : null}
     </div>
   );
 }

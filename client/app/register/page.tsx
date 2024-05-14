@@ -25,9 +25,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { login, register } from "../../Services/auth/authService";
 import { redirect, usePathname, useRouter } from "next/navigation";
+import { AuthContext } from "@/hooks/auth/AuthProvider";
 
 const formSchema = z
   .object({
@@ -66,7 +67,11 @@ export default function Page({ switchToLogin }: PageProps) {
     animationData: loader,
     loop: open == true ? false : true,
   };
+
+
   const router = useRouter();
+
+
 
   useEffect(() => {
     setIsMounted(true);
@@ -107,7 +112,7 @@ export default function Page({ switchToLogin }: PageProps) {
           <DialogTrigger></DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Login</DialogTitle>
+              <DialogTitle>Register</DialogTitle>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
