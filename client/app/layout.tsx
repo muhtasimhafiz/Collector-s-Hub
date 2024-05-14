@@ -4,6 +4,7 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import Provider from "@/hooks/provider";
+import { NavbarDemo as Navbar } from "@/components/ui/navbar/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +31,10 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <Provider>{children}</Provider>
+        <Provider>
+          <Navbar/>
+          {children}
+          </Provider>
       </body>
     </html>
   );
