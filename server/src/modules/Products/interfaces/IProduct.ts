@@ -4,7 +4,8 @@ export interface IProduct {
   description?: string;
   seller_id: number;
   status: string;
-  bidding?: boolean;
+  image:string;
+  bidding?: 1|0;
   price: number;
   ratings?: number;
   quantity?: number;

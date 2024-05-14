@@ -3,6 +3,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.1.9",
+    "next-cloudinary": "^6.5.2",
     "pg": "^8.11.5",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3",

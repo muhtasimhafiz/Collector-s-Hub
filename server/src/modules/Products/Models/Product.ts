@@ -5,6 +5,7 @@ import { ProductCategory } from './ProductCategory';
 import { ProductJoinCategory } from './ProductJoinCategory';
 import { User } from '../../Users/models/User';
 import { ProductReview } from './ProductReview';
+import { AllowNull } from 'sequelize-typescript';
 
 export type ProductCreationAttributes = Optional<IProduct, 'id'|'status'|'bidding'|'ratings'|'quantity'|'currency'|'created_by'|'updated_by'|'deleted'>;
 export class Product extends Model<IProduct, ProductCreationAttributes> {
@@ -27,6 +28,10 @@ Product.init({
     allowNull: false,
     unique: true,
   },
+  image:{
+    type:DataTypes.STRING(255),
+    allowNull:false
+  },
   description: {
     type: DataTypes.STRING(255),
     allowNull: true,
@@ -41,7 +46,7 @@ Product.init({
     allowNull: false,
   },
   bidding: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.INTEGER,
     defaultValue: false,
   },
   price: {

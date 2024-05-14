@@ -3,8 +3,8 @@ import productService from '../services/ProductService';
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const {name, description, price, seller_id} = req.body;
-    const newProduct = await productService.createProduct(req,{name, description, price, seller_id});
+    const {name, description, price, seller_id, image} = req.body;
+    const newProduct = await productService.createProduct(req,{name, description, price, seller_id, image});
     res.status(201).json(newProduct);
   } catch (error) {
     res.status(500).json({message: (error as Error).message});
