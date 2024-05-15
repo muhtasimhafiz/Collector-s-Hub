@@ -57,7 +57,7 @@ export const formSchema = z.object({
   // seller_id: z.coerce.number().min(1, "Seller is required"),
   seller_id: z.coerce.number(),
 
-  Currency: z.string()
+  currency: z.string()
 });
 
 export default function Page() {
@@ -142,7 +142,6 @@ export default function Page() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("submit triggered Product page");
     try {
       setLoading(true);
       values.seller_id = user?.id??0;
@@ -170,7 +169,7 @@ export default function Page() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <input type="hidden" name="seller_id" value={user?.id} />
-            <input type="hidden" name="seller_id" value={"USD"} />
+            <input type="hidden" name="currency" value={"USD"} />
             <FormField
               control={form.control}
               name="name"
