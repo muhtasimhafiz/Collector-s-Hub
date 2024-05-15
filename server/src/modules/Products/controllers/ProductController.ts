@@ -1,12 +1,23 @@
 import {Request, Response} from 'express';
 import productService from '../services/ProductService';
+import { IProduct } from '../interfaces/IProduct';
+import { ProductCreationAttributes } from '../models/Product';
+import { sequelize } from '../../../../config/database';
 
 export const createProduct = async (req: Request, res: Response) => {
-  try {
-    const {name, description, price, seller_id, image} = req.body;
-    const newProduct = await productService.createProduct(req,{name, description, price, seller_id, image});
+  const transaction = await sequelize.transaction();
+  try {   
+    const productDetails:ProductCreationAttributes = req.body as ProductCreationAttributes;
+    const newProduct = await productService.createProduct(req, productDetails);
+    if(req.body.category_id){
+      console.log('category_id');
+      await productService.addProductCategories(newProduct.id,req.body.category_id);
+    }
+    await transaction.commit();
     res.status(201).json(newProduct);
-  } catch (error) {
+  } catch (error : any) {
+    await transaction.rollback();
+    console.log(error.message)
     res.status(500).json({message: (error as Error).message});
   }
 };

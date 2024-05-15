@@ -1,6 +1,5 @@
-export const serverURL = "http://localhost:4200";
-export const cloudinary = require('cloudinary').v2;
-import {Cloudinary} from "@cloudinary/url-gen";
+export const serverURL = "http://localhost:4200/api/";
+
 
 import { z } from 'zod';
 
@@ -13,10 +12,3 @@ export const imageFileSchema = z.custom((value) => {
   return validImageTypes.includes(value.type);
 }, { message: 'Image file is required' });
 
-export const cloudN = new Cloudinary({
-  cloud: {
-    cloudName: 'dlcjonwcq',
-    apiKey:'683883122435356',
-    apiSecret:'w3O7ZMwbuSqghXOyIVaaxK_sa04'
-  }
-});
