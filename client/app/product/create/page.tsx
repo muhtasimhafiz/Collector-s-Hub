@@ -164,7 +164,7 @@ export default function Page() {
   };
 
   return (
-<div className="bg-white rounded shadow p-10 flex flex-col sm:flex-row items-center justify-center gap-3 h-[500px] sm:h-auto">
+<div className="bg-white rounded shadow p-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:h-auto">
       <div className="self-start">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -292,7 +292,7 @@ export default function Page() {
                     Bidding?
                   </FormLabel>
                   <FormControl>
-                    <Checkbox {...field} />
+                    <Checkbox {...field} value={field.value ? "true" : "false"} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -312,7 +312,7 @@ export default function Page() {
             height={900}
             src={imageUrl}
             alt="Image"
-            className="rounded-md object-contain h-full w-full" 
+            className="rounded-md object-contain h-full w-full" // Ensures the image fits within the div without stretching
           />
           {/* </AspectRatio> */}
         </div>
