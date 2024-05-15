@@ -32,7 +32,7 @@ export default function RootLayout({
         )}
       >
         <Provider>
-          <Navbar/>
+          {/* <Navbar/> */}
           <div className="min-h-screen flex items-center justify-center align-center">
           {children}
           </div>

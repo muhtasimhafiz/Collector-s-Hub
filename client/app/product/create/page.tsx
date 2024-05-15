@@ -164,7 +164,7 @@ export default function Page() {
   };
 
   return (
-    <div className="bg-white rounded shadow p-10 flex flex-col sm:flex-row h-[500px] sm:h-auto">
+<div className="bg-white rounded shadow p-10 flex flex-col sm:flex-row items-center justify-center gap-3 h-[500px] sm:h-auto">
       <div className="self-start">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -312,7 +312,7 @@ export default function Page() {
             height={900}
             src={imageUrl}
             alt="Image"
-            className="rounded-md object-cover"
+            className="rounded-md object-contain h-full w-full" 
           />
           {/* </AspectRatio> */}
         </div>
