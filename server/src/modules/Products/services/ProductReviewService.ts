@@ -6,13 +6,17 @@ class ProductReviewService {
   async createProductReview(req: Request | null, reviewDetails: ProductReviewCreationAttributes): Promise<ProductReview> {
     try {
       let user_id = null;
+      
       if ((req as any).user) {
         user_id = (req as any).user.id;
       }
+
       if(!user_id) throw new Error('User not found');
       reviewDetails.user_id = user_id;
+      
       const review = await ProductReview.create({ ...reviewDetails, created_by: user_id });
-      return review;
+      const reviewWithUser = await review.reload({ include: 'user' });
+      return reviewWithUser;
     } catch (error) {
       throw new Error('Error creating the review');
     }

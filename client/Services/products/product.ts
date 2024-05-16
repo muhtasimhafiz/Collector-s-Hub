@@ -11,7 +11,7 @@ export const fetchProductCategory = async () => {
     return { error: error.message };
   }
 
-} 
+}
 
 export const createDropdownOptions = <T, K extends keyof T>(array: T[], valueKey: K = 'id' as K, labelKey: K = 'name' as K): { value: T[K], label: T[K] }[] => {
   return array.map((item) => ({
@@ -23,8 +23,8 @@ export const createDropdownOptions = <T, K extends keyof T>(array: T[], valueKey
 
 
 interface ProductCategories_ProductCreation {
-  value:string;
-  label:string;
+  value: string;
+  label: string;
 }
 interface ProductCreation extends Omit<IProduct, 'id'> {
   category_id: ProductCategories_ProductCreation[];
@@ -58,4 +58,23 @@ export const fetchProducts = async () => {
     console.error(error);
     return { error: error.message };
   }
+}
+
+export const postReview = async (review: { product_id: string, review: string }) => {
+  try {
+    const response = await fetch(`${serverURL}product/reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(review),
+    });
+
+    return await response.json();
+  } catch (error:any) {
+    console.error(error);
+    console.log(error.message)
+  }
+
 }
