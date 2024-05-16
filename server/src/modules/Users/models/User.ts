@@ -14,6 +14,14 @@ User.init({
         autoIncrement: true,
         primaryKey: true,
     },
+    first_name: {
+        type:DataTypes.STRING(128),
+        allowNull: true,
+    },
+    last_name: {
+        type:DataTypes.STRING(128),
+        allowNull: true,
+    },
     username: {
         type: DataTypes.STRING(128),
         allowNull: false,

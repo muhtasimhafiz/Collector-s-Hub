@@ -48,3 +48,14 @@ export const createProduct = async (product: ProductCreation) => {
     return { error: error.message };
   }
 }
+
+export const fetchProducts = async () => {
+  try {
+    const response = await fetch(`${serverURL}product`);
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message };
+  }
+}

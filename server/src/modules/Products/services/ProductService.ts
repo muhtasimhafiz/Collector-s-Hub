@@ -32,17 +32,27 @@ class ProductService {
 
   async getAllProducts(): Promise<Product[]> {
     try {
-      const products = await Product.findAll();
+      const products = await Product.findAll(
+        {
+          include: [
+            {
+              model: ProductCategory,
+              through: { attributes: [] }, 
+            },
+            'seller'
+          ]
+        }
+      );
       return products;
-    } catch (error) {
+    } catch (error: any) {
+      
+      console.log(error.message)
       throw new Error('Error retrieving products');
     }
   }
 
   async getProductById(productId: number): Promise<Product | null> {
-    console.log('getProductById');
     try {
-
       const product = await Product.findByPk(productId,
         {
           include: [
