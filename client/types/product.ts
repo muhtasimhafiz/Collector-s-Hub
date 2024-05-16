@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface IProduct {
   id: number;
   name:string,
@@ -36,6 +38,7 @@ export interface IProductCategory {
 
 
 export interface IProductReview {
+  user?: User;
   id: number;
   product_id: number;
   user_id: number;

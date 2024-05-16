@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { IProductReview } from "@/types/product"
 
-export default function Component({product_id, reviews}:{product_id: number, reviews: IProductReview[]}) {
+
+export default function Component({product_id, reviews}:{product_id: string, reviews: IProductReview[]}) {
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
       <div className="grid gap-4">
@@ -17,22 +18,22 @@ export default function Component({product_id, reviews}:{product_id: number, rev
           <Button>Submit</Button>
         </div>
         <div className="space-y-6">
-          <div className="flex items-start gap-4">
-            <Avatar className="h-10 w-10 border">
-              <AvatarImage alt="@shadcn" src="/placeholder-user.jpg" />
-              <AvatarFallback>AC</AvatarFallback>
-            </Avatar>
-            <div className="grid gap-1.5">
-              <div className="flex items-center gap-2">
-                <div className="font-semibold">@iamwillpursell</div>
-                <div className="text-gray-500 text-xs dark:text-gray-400">5 months ago</div>
+          {reviews.map((review) => (
+            <div key={review.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {review.user && <div className="font-semibold">@{review.user.username}</div>}
+                  <div className="text-gray-500 text-xs dark:text-gray-400">5 months ago</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-xs text-gray-500 dark:text-gray-400">5 stars</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Reply</div>
+                </div>
               </div>
-              <div>
-                I really love the ecosystem Vercel is creating. The way each component can be added and modified with
-                ease really makes these tools attractive.
-              </div>
+              <div>{review.review}</div>
             </div>
-          </div>
+          ))}
+
         </div>
       </div>
     </div>

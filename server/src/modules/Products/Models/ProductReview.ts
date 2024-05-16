@@ -3,12 +3,14 @@ import { IProductReview } from "../interfaces/IProductReview";
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import { sequelize } from "../../../../config/database";
 import { Product } from "./Product";
+import { User } from "../../Users/models/User";
 
 
 export type ProductReviewCreationAttributes = {
   product_id: number;
   user_id: number;
   review: string;
+  
   deleted?: boolean;
   deleted_at?: Date | null;
   deleted_by?: number | null;
@@ -70,11 +72,22 @@ ProductReview.init({
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-}, {
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'created_at'
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'updated_at'
+  },
+},  {
   sequelize,
   modelName: 'ProductReview',
   tableName: 'product_reviews',
-  timestamps: false,
+  timestamps: true,
+  underscored: true,
   paranoid: true,
   defaultScope: {
     where: { deleted: false }
@@ -86,7 +99,8 @@ ProductReview.init({
   },
 })
 
-// ProductReview.belongsTo(Product, {
-//   foreignKey: 'product_id',
-//   as : 'product'
-// });
+
+ProductReview.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user'
+});

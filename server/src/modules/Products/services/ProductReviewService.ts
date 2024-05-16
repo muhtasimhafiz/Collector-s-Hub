@@ -1,3 +1,4 @@
+import { IProduct } from "../interfaces/IProduct";
 import { ProductReview, ProductReviewCreationAttributes } from "../models/ProductReview";
 import { Request } from 'express';
 
@@ -8,6 +9,8 @@ class ProductReviewService {
       if ((req as any).user) {
         user_id = (req as any).user.id;
       }
+      if(!user_id) throw new Error('User not found');
+      reviewDetails.user_id = user_id;
       const review = await ProductReview.create({ ...reviewDetails, created_by: user_id });
       return review;
     } catch (error) {

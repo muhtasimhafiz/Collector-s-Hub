@@ -60,7 +60,8 @@ class ProductService {
               model: ProductCategory,
               through: { attributes: [] }, // This will skip the join table attributes
             },
-            'seller'
+            'seller',
+           {association: 'reviews', include: ['user']}
           ]
         }
       );
