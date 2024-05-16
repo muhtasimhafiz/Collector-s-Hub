@@ -44,14 +44,14 @@ const ProductDetail = ({ params }: ProductDetailProps) => {
 
   return (
     product && (
-      <div className="h-full flex flex-col">
-        <CardContainer className="self-start">
-          <ProductCard product={product} />
-        </CardContainer>
-        <section>
-          <ProductReviews product_id={params.id} reviews={product.reviews} />
-        </section>
-      </div>
+<div className="h-screen w-full flex flex-col sm:flex-row items-center justify-center">
+  <CardContainer className="self-start">
+    <ProductCard product={product} />
+  </CardContainer>
+  <section className="h-full w-full sm:w-1/2 overflow-y-auto scrollbar-hide">
+    <ProductReviews product_id={params.id} reviews={product.reviews} />
+  </section>
+</div>
     )
   );
 };

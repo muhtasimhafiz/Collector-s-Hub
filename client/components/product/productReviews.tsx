@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { postReview } from "@/Services/products/product";
 import { useState } from "react";
+import './style.css';
 
 export const formSchema = z.object({
   user_id: z.string(),
