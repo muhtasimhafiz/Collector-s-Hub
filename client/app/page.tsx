@@ -11,6 +11,7 @@ import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { IProduct } from "@/types/product";
 import { fetchProducts } from "@/Services/products/product";
 import ProductCard from "@/components/product/productCardItem";
+import Multiloader from "@/components/ui/Multiloader";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
@@ -32,7 +33,9 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-row gap-1 items-center justify-center p-24">
       {loading == true ? (
-        <div>Loading...</div>
+        <div>
+          <Multiloader run={loading} />
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {products.map((product) => (

@@ -30,6 +30,7 @@ import { login as loginHandler } from "../../Services/auth/authService";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import RegisterComponent from "../register/page";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
+import Multiloader from "@/components/ui/Multiloader";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -100,7 +101,8 @@ export default function Page() {
     <div>
       {loading == true ? (
         <div>
-          <Lottie animationData={loader} loop={loading} />
+          <Multiloader run={loading} />
+          {/* <Lottie animationData={loader} loop={loading} /> */}
         </div>
       ) : (
         // Your form goes here
