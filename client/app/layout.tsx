@@ -4,7 +4,8 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import Provider from "@/hooks/provider";
-import { NavbarDemo as Navbar } from "@/components/ui/navbar/Navbar";
+// import { NavbarDemo as Navbar } from "@/components/ui/navbar/Navbar";
+import NavBar from "@/components/ui/navbar/NavbarChakra";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,10 +34,11 @@ export default function RootLayout({
       >
         <Provider>
           {/* <Navbar/> */}
+          <NavBar />
           <div className="min-h-screen flex items-center justify-center align-center">
-          {children}
+            {children}
           </div>
-          </Provider>
+        </Provider>
       </body>
     </html>
   );
