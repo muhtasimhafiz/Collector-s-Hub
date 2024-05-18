@@ -2,6 +2,7 @@ interface User {
   id: number;
   first_name?: string;
   last_name?: string;
+  iamge?: string;
   username: string;
   password: string;
   email?: string;

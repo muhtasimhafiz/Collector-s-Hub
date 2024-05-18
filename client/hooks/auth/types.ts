@@ -2,6 +2,7 @@ import { IProduct } from "@/types/product";
 
 export interface User {
   id: number;
+  image?: string;
   username: string;
   password: string;
   email?: string;

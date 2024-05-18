@@ -69,7 +69,7 @@ export default function Component({
     }
   };
   return (
-    <div className="w-full max-w-2xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+    <div className="max-h-96 w-full max-w-2xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
       <div className="grid gap-4">
         {user ? (
           <div className="grid gap-2">

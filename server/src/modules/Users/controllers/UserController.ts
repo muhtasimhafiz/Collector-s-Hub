@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createUser, findUserByEmailOrUsername, getUserById, loginUser } from '../services/userService';
+import { createUser, findUserByEmailOrUsername, getUserById, loginUser, updateUser } from '../services/userService';
 import { validationResult } from 'express-validator';
 
 /**
@@ -73,6 +73,15 @@ export const registrationHandle = async (req: Request, res: Response) => {
 export const getuserDetails = async (req: Request, res: Response) => {
   try {
     const user = await getUserById(Number(req.params.id));
+    res.status(200).json(user);
+  } catch (error:any) {
+    res.status(500).json({ message: "Failed to get user details", error: error.message });
+  }
+}
+
+export const updateUserDetails = async (req: Request, res: Response) => {
+  try {
+    const user = await updateUser(Number(req.params.id), req.body);
     res.status(200).json(user);
   } catch (error:any) {
     res.status(500).json({ message: "Failed to get user details", error: error.message });

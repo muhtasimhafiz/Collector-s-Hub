@@ -19,6 +19,10 @@ User.init({
         type: DataTypes.STRING(128),
         allowNull: true,
     },
+    image: {
+        type: DataTypes.STRING(128),
+        allowNull: true,
+    },
     last_name: {
         type: DataTypes.STRING(128),
         allowNull: true,

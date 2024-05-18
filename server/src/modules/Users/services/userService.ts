@@ -52,7 +52,7 @@ export const createUser = async (userData:Partial<User>): Promise<User> => {
 export const getUserById = async (id: number): Promise<User | null> => {
     try {
         const user = await User.findByPk(id, {  
-            include: [{ model: Product, as: 'products' }]
+            // include: [{ model: Product, as: 'products' }]
           });
         return user;
     } catch (error) {
@@ -73,8 +73,10 @@ export const getAllUsers = async (): Promise<User[]> => {
 };
 
 // Update a user
-export const updateUser = async (id: number, updates: { username?: string; email?: string; password?: string }): Promise<User | null> => {
+export const updateUser = async (id: number, updates: Partial<User>): Promise<User | null> => {
+    console.log("updates");
     try {
+        console.log(updates);
         const user = await User.findByPk(id);
         if (user) {
             if (updates.password) {

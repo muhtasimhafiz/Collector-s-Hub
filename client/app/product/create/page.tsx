@@ -24,14 +24,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+// import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cldUpload } from "@/Services/cloudinary";
 import {
   createDropdownOptions,
   createProduct,
   fetchProductCategory,
 } from "@/Services/products/product";
-import { Currency } from "lucide-react";
+// import { Currency } from "lucide-react";
 
 export const formSchema = z.object({
   name: z.string().min(2, {

@@ -1,5 +1,8 @@
+import { IProduct } from "./product";
+
 export  interface User {
   id: number;
+  image?: string;
   first_name?: string;
   last_name?: string;
   username: string;
@@ -21,4 +24,5 @@ export  interface User {
   created_by?: number;
   updated_at?: Date;
   updated_by?: number;
+  products?: IProduct[];
 }
