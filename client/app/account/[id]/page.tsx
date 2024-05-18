@@ -50,8 +50,8 @@ export default function Page({ params }: AccountDetailProps) {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [OpenDialog, setOpenDialog] = useState(false);
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState<string|StaticImageData>(avatar);
-  const [ProfileImage, setProfileImage] = useState<string|StaticImageData >(avatar);
+  const [imageUrl, setImageUrl] = useState<string | StaticImageData>(avatar);
+  const [ProfileImage, setProfileImage] = useState<string | StaticImageData>(avatar);
   const [dialogeLoading, setDialogeLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(fileUploadSchema),
@@ -77,21 +77,20 @@ export default function Page({ params }: AccountDetailProps) {
           setImageUrl(account.image);
         }
 
-        console.log(profileImage);
+        console.log(ProfileImage);
       } catch (error: any) {
         console.log(error.message);
       }
     };
     getUser();
-  }, [params.id, account]);
+  }, [params.id]);
 
   if (!account) {
-    // alert("User not found");
-   
-    return <>
-     <Multiloader run={true} />
-    </>;
-    // router.back();
+    return (
+      <>
+        <Multiloader run={true} />
+      </>
+    );
   }
 
   const tabs = [
@@ -99,22 +98,12 @@ export default function Page({ params }: AccountDetailProps) {
       title: "Product",
       value: "product",
       content: (
-        <div className=" flex flex-col justify-center w-full pt-4  overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
+        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
           <p>Product Tab</p>
           <DummyContent products={products} />
         </div>
       ),
     },
-    // {
-    //   title: "Services",
-    //   value: "services",
-    //   content: (
-    //     <div className="w-full overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-gradient-to-br from-purple-700 to-violet-900">
-    //       <p>Services tab</p>
-    //       <DummyContent products={products}/>
-    //     </div>
-    //   ),
-    // },
   ];
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,14 +128,13 @@ export default function Page({ params }: AccountDetailProps) {
 
   const onSubmit = async (values: z.infer<typeof fileUploadSchema>) => {
     try {
-
       setDialogeLoading(true);
       let data = await cldUpload(values.image, account.id);
 
       setProfileImage(data.secure_url);
       setImageUrl(data.secure_url);
       setOpenDialog(false);
-      const response = await updateUser(account.id, { image: data.secure_url });
+      await updateUser(account.id, { image: data.secure_url });
       setDialogeLoading(false);
     } catch (error: any) {
       setDialogeLoading(false);
@@ -171,7 +159,7 @@ export default function Page({ params }: AccountDetailProps) {
         <p className="text-gray-600">100 Followers</p>
       </div>
 
-      <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start">
+      <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full items-start justify-start">
         <Tabs tabs={tabs} />
       </div>
 
@@ -231,8 +219,8 @@ const DummyContent = ({ products }: { products: IProduct[] }) => {
       style={{ maxHeight: "200px" }}
     >
       {products.map((product) => (
-        <div key={product.id} className=" p-2">
-          <div className="bg-white rounded-xl ">
+        <div key={product.id} className="p-2">
+          <div className="bg-white rounded-xl">
             <Image
               src={product.image} // Replace with dynamic path
               alt="Product Image"
