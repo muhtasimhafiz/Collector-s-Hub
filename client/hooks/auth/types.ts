@@ -1,3 +1,5 @@
+import { IProduct } from "@/types/product";
+
 export interface User {
   id: number;
   username: string;
@@ -19,6 +21,7 @@ export interface User {
   created_by?: number;
   updated_at?: Date;
   updated_by?: number; 
+  products?: IProduct[];
 }
 
 

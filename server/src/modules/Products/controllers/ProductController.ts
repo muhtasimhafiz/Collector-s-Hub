@@ -24,7 +24,7 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-    const products = await productService.getAllProducts();
+    const products = await productService.getAllProducts(req);
     res.json(products);
   } catch (error) {
     res.status(500).json({message: (error as Error).message});

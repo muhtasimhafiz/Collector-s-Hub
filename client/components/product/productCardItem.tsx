@@ -3,8 +3,9 @@ import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { IProduct } from '@/types/product';
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 import Image from "next/image";
+import Link from 'next/link';
 
-const ProductCard = ({ product }: { product: IProduct }) => {
+const ProductCard = ({ product, showLink=false }: { product: IProduct, showLink?: boolean }) => {
   return (
     <CardItem>
       <CardBody>
@@ -18,7 +19,13 @@ const ProductCard = ({ product }: { product: IProduct }) => {
               className="object-contain"
             />
             <p className="text-base sm:text-xl text-black mt-4 mb-2 dark:text-neutral-200">
-              {product.name}
+              
+              {showLink ?
+                <Link href={`/product/${product.id}`}>
+                 {product.name}
+                </Link> : product.name
+              }
+
             </p>
 
             <p className="text-sm text-neutral-600 dark:text-neutral-400">

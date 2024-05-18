@@ -10,7 +10,6 @@ export const fetchProductCategory = async () => {
     console.error(error);
     return { error: error.message };
   }
-
 }
 
 export const createDropdownOptions = <T, K extends keyof T>(array: T[], valueKey: K = 'id' as K, labelKey: K = 'name' as K): { value: T[K], label: T[K] }[] => {
@@ -49,9 +48,10 @@ export const createProduct = async (product: ProductCreation) => {
   }
 }
 
-export const fetchProducts = async () => {
+export const fetchProducts = async (where:Partial<IProduct> = {}) => {
   try {
-    const response = await fetch(`${serverURL}product`);
+    const queryParams = new URLSearchParams(where as any).toString();
+    const response = await fetch(`${serverURL}product?${queryParams}`);
     const data = await response.json();
     return data;
   } catch (error: any) {

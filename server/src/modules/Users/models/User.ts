@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../../../config/database';  // Adjust the path as needed
+import { Product } from '../../Products/models/Product';
 
 export class User extends Model {
     public id!: number; // The '!' tells TypeScript that these properties will definitely be assigned
@@ -15,11 +16,11 @@ User.init({
         primaryKey: true,
     },
     first_name: {
-        type:DataTypes.STRING(128),
+        type: DataTypes.STRING(128),
         allowNull: true,
     },
     last_name: {
-        type:DataTypes.STRING(128),
+        type: DataTypes.STRING(128),
         allowNull: true,
     },
     username: {
@@ -102,3 +103,9 @@ User.init({
     timestamps: true,
     underscored: true,
 });
+
+
+// User.hasMany(Product, {
+//     foreignKey: 'seller_id',
+//     as: 'products'
+// });

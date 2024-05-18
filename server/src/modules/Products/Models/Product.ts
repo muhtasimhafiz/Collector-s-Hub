@@ -1,5 +1,5 @@
 import { Model, DataTypes, Optional } from 'sequelize';
-import { sequelize } from '../../../../config/database'; 
+import { sequelize } from '../../../../config/database';
 import { IProduct } from '../interfaces/IProduct';
 import { ProductCategory } from './ProductCategory';
 import { ProductJoinCategory } from './ProductJoinCategory';
@@ -7,7 +7,7 @@ import { User } from '../../Users/models/User';
 import { ProductReview } from './ProductReview';
 import { AllowNull } from 'sequelize-typescript';
 
-export type ProductCreationAttributes = Optional<IProduct, 'id'|'status'|'bidding'|'ratings'|'quantity'|'currency'|'created_by'|'updated_by'|'deleted'>;
+export type ProductCreationAttributes = Optional<IProduct, 'id' | 'status' | 'bidding' | 'ratings' | 'quantity' | 'currency' | 'created_by' | 'updated_by' | 'deleted'>;
 export class Product extends Model<IProduct, ProductCreationAttributes> {
   public id!: number;
   public name!: string;
@@ -28,9 +28,9 @@ Product.init({
     allowNull: false,
     unique: true,
   },
-  image:{
-    type:DataTypes.STRING(255),
-    allowNull:false
+  image: {
+    type: DataTypes.STRING(255),
+    allowNull: false
   },
   description: {
     type: DataTypes.STRING(255),
@@ -44,6 +44,10 @@ Product.init({
   seller_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    }
   },
   bidding: {
     type: DataTypes.INTEGER,
@@ -112,7 +116,7 @@ Product.belongsTo(User, {
   as: 'seller'
 });
 
-Product.hasMany(ProductReview,{
+Product.hasMany(ProductReview, {
   foreignKey: 'product_id',
   as: 'reviews'
 });

@@ -1,6 +1,7 @@
 import { User } from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { Product } from '../../Products/models/Product';
 
 
 // Function to generate JWT
@@ -50,7 +51,9 @@ export const createUser = async (userData:Partial<User>): Promise<User> => {
 // Get a single user by ID
 export const getUserById = async (id: number): Promise<User | null> => {
     try {
-        const user = await User.findByPk(id);
+        const user = await User.findByPk(id, {  
+            include: [{ model: Product, as: 'products' }]
+          });
         return user;
     } catch (error) {
         console.error('Error retrieving user:', error);

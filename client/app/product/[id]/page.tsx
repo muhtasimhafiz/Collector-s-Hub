@@ -48,7 +48,7 @@ const ProductDetail = ({ params }: ProductDetailProps) => {
   <CardContainer className="self-start">
     <ProductCard product={product} />
   </CardContainer>
-  <section className="h-full w-full sm:w-1/2 overflow-y-auto scrollbar-hide">
+  <section className="h-full w-full sm:w-1/2 overflow-y-auto scrollbar-hide flex items-center">
     <ProductReviews product_id={params.id} reviews={product.reviews} />
   </section>
 </div>

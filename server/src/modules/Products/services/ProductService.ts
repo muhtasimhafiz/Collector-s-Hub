@@ -30,10 +30,13 @@ class ProductService {
     }
   }
 
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts(req:Request): Promise<Product[]> {
     try {
+      const query = req.query
+      
       const products = await Product.findAll(
         {
+          where: query,
           include: [
             {
               model: ProductCategory,
