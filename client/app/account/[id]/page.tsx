@@ -1,6 +1,6 @@
 "use client";
 import { use, useEffect, useState } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { User } from "@/hooks/auth/types";
 import { useRouter } from "next/navigation";
 import { Tabs } from "@/components/ui/tabs-acternity";
