@@ -1,14 +1,14 @@
-import { Model, ModelCtor } from 'sequelize';
+import { Model } from 'sequelize';
 import { Request } from 'express';
 
-abstract class BaseService<T extends Model, U> {
+abstract class BaseService<T extends Model> {
   protected model: typeof Model & { new(): T };
 
   constructor(model: typeof Model & { new(): T }) {
     this.model = model;
   }
 
-  async create(req: Request | null, details: U): Promise<T> {
+  async create(req: Request | null, details: Partial<T>): Promise<T> {
     let user_id = null;
     if ((req as any).user) {
         user_id = (req as any).user.id;

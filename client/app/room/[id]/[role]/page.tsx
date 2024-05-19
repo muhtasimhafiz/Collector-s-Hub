@@ -68,7 +68,7 @@ const Page = ({ params }: RoomId) => {
     <div>
       <h1>Room {roomID}</h1>
       {/* <div ref={myLiveStream} /> */}
-      <div ref={myLiveStream} />
+      <div  ref={myLiveStream} />
     </div>
   );
 };

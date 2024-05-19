@@ -3,38 +3,57 @@ import React, { useContext, useEffect, useState } from "react";
 import { InputGroup, InputLeftElement, Input, Icon } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
-
+import { Router } from "lucide-react";
+import { useRouter } from "next/router";
+import { v4 as uuidv4 } from "uuid";
+import Link from "next/link";
 
 const NavBar = () => {
-  const {user} = useContext(AuthContext);
-
+  const { user } = useContext(AuthContext);
+  // const router = useRouter();
+  // const uniqueId = uuidv4();
+  const [uniqueId, setUniqueId] = useState<string>(uuidv4());
 
   return (
-    <div>
-      <nav className="bg-white shadow-sm border-2 text-black p-3 flex justify-between items-center rounded-full mr-ml-40">
+    <div className="fixed w-full z-10 bottom-0 md:top-0 md:bottom-auto">
+      <nav className="bg-white shadow-md border-2 text-black p-3 flex justify-between items-center rounded-full mx-10">
         <div className="flex items-center">
           {/* Icon on the left */}
-          <Icon as={SearchIcon} className="w-6 h-6 mx-3" aria-label="Menu" />
+          <Icon
+            as={SearchIcon}
+            className="w-6 h-6 mx-3 text-gray-600"
+            aria-label="Menu"
+          />
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-4 items-center">
           {/* Search input */}
-          <InputGroup size="sm" className="hidden sm:flex">
+          {/* <InputGroup size="sm" className="hidden sm:flex">
             <InputLeftElement pointerEvents="none">
               <SearchIcon color="gray.300" />
             </InputLeftElement>
             <Input
               type="text"
               placeholder="Search"
-              className="w-full bg-gray-700 text-white placeholder-gray-400"
+              className="w-full bg-gray-200 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg"
             />
-          </InputGroup>
+          </InputGroup> */}
 
           {/* Login Button */}
           {user ? (
-            <span>Hello {user.username}</span>
-          ): (
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">
+            <div>
+              <Link href={`/room/${uniqueId}/host`}>
+                <button className="mr-2 px-4 py-2 rounded-md border border-black bg-white text-red-500 text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200">
+                  Go Live
+                </button>
+              </Link>
+
+              <span className="text-gray-700 font-semibold">
+                Hello {user.username}
+              </span>
+            </div>
+          ) : (
+            <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105">
               Login
             </button>
           )}

@@ -13,7 +13,7 @@ import { CalendarDays } from "lucide-react";
 
 const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
   return (
-<CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
+<CardBody className="h-50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
   <CardItem
     translateZ="50"
     className="text font-bold text-neutral-600 dark:text-white"

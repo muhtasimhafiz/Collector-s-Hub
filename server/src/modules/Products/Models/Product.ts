@@ -103,6 +103,7 @@ Product.init({
   timestamps: true,
   underscored: true,
   modelName: 'Product',
+  paranoid: true,
 });
 
 Product.belongsToMany(ProductCategory, {
