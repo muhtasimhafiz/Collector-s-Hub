@@ -121,4 +121,10 @@ Product.hasMany(ProductReview, {
   as: 'reviews'
 });
 
+User.hasMany(Product, {
+  foreignKey: 'seller_id',
+  as: 'products'
+
+});
+
 // Product.belongsToMany(ProductCategory, { through: ProductJoinCategory });

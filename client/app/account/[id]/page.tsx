@@ -72,7 +72,7 @@ export default function Page({ params }: AccountDetailProps) {
         setProducts(user_products);
         setAccount(data);
 
-        if (account?.image) {
+        if (account.image) {
           setProfileImage(account.image);
           setImageUrl(account.image);
         }
@@ -115,7 +115,7 @@ export default function Page({ params }: AccountDetailProps) {
       form.setValue("image", file);
 
       reader.onload = (e) => {
-        setImageUrl(file);
+        setImageUrl(e.target.result as string);
       };
 
       reader.readAsDataURL(event.target.files[0]);

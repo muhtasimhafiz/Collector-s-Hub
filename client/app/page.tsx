@@ -38,7 +38,7 @@ export default function Home() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {products.map((product) => (
+          {products.length>0 && products?.map((product) => (
             <CardContainer key={product.id}>
               <ProductCard product={product} 
                 showLink={true}
