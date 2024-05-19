@@ -13,7 +13,8 @@ import { fetchProducts } from "@/Services/products/product";
 import ProductCard from "@/components/product/productCardItem";
 import Multiloader from "@/components/ui/Multiloader";
 import ProductLandingPageCard from "@/components/product/productLandingPageCard";
-import {card} from "";
+import { card } from "";
+import Stream from "@/components/streams/page";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
@@ -33,38 +34,38 @@ export default function Home() {
     getProducts();
   }, []);
   return (
-    <main className="flex min-h-screen flex-col gap-1 items-center justify-center p-24">
-      {loading == true ? (
+    <main className="flex min-h-screen flex-col gap-1 items-center justify-center p-4 md:p-24">
+      {loading ? (
         <div>
           <Multiloader run={loading} />
         </div>
       ) : (
-        <div>
-          <div>
-            <h1 className="text-4xl font-bold text-center">
+        <div className="w-full">
+          <div className="mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-center">
               Welcome to our store
             </h1>
           </div>
-          <div>
-            <h1>
-              Stream
-            </h1>
-            <div class="flex flex-row">
-
-
+          <div className="mb-4">
+            <h1 className="font-bold text-lg">Stream</h1>
+            <div className="flex justify-center">
+              <Stream />
             </div>
           </div>
-
-
           {/* Product Listing page */}
-          <div className="flex flex-row flex-wrap gap-1">
-            <CardContainer className="inter-var"></CardContainer>
-            {products.length > 0 &&
-              products?.map((product) => (
-                <CardContainer className="inter-var" key={product.id}>
-                  <ProductLandingPageCard product={product} />
-                </CardContainer>
-              ))}
+          <div className="w-full">
+            <h2 className="font-bold text-lg mb-2">Products</h2>
+            <div className="flex flex-row overflow-x-auto gap-4 whitespace-nowrap w-80 sm:w-full md:w-full">
+              {products.length > 0 &&
+                products.map((product) => (
+                  <CardContainer
+                    className="inter-var h-50 min-w-[15rem]"
+                    key={product.id}
+                  >
+                    <ProductLandingPageCard product={product} />
+                  </CardContainer>
+                ))}
+            </div>
           </div>
         </div>
       )}
