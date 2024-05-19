@@ -9,6 +9,7 @@ export interface IProduct {
   bidding?: boolean;
   price: number;
   image:string;
+  seller?: User;
 
   ratings?: number;
   quantity?: number;
