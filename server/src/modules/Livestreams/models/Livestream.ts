@@ -42,7 +42,12 @@ Livestream.init({
   updated_by: {
     type: DataTypes.INTEGER,
     allowNull: true,
-  }
+  },
+  status: {
+    type: DataTypes.ENUM('live', 'offline'),
+    allowNull: true,
+    defaultValue:'live'
+  },
 }, {
   sequelize,
   defaultScope: {

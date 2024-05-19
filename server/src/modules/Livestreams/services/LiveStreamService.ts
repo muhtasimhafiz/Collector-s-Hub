@@ -24,7 +24,7 @@ class LivestreamService  {
   }
 
   async getAllLivestreams(where: Partial<ILivestream>): Promise<ILivestream[]> {
-    const entities = await Livestream.findAll({ where });
+    const entities = await Livestream.findAll({ where, include: ['user'] });
     return entities;
   }
 
@@ -71,6 +71,29 @@ class LivestreamService  {
     } catch (error: any) {
       console.log(error.message)
       throw new Error('Error retrieving the livestream');
+    }
+  }
+
+  async findOrCreate(where: Partial<ILivestream>, defaults: LivestreamCreationAttributes): Promise<ILivestream> {
+    try {
+      const [entity] = await Livestream.findOrCreate({ where, defaults });
+      return entity;
+    } catch (error) {
+      throw new Error('Error finding or creating the livestream');
+    }
+  }
+
+  async updateWhere(where: Partial<ILivestream>, details: Partial<ILivestream>): Promise<ILivestream[]> {
+    try {
+      const [affectedCount] = await Livestream.update(details, { where });
+      if (affectedCount === 0) {
+        return [];
+      }
+      const entities = await Livestream.findAll({ where });
+      console.log(entities)
+      return entities;
+    } catch (error) {
+      throw new Error('Error updating the livestreams');
     }
   }
  

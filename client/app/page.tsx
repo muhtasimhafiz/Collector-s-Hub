@@ -46,12 +46,8 @@ export default function Home() {
               Welcome to our store
             </h1>
           </div>
-          <div className="mb-4">
-            <h1 className="font-bold text-lg">Stream</h1>
-            <div className="flex justify-center">
-              <Stream />
-            </div>
-          </div>
+          {/* streaming */}
+            <Stream />
           {/* Product Listing page */}
           <div className="w-full">
             <h2 className="font-bold text-lg mb-2">Products</h2>

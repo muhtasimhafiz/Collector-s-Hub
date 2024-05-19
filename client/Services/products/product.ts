@@ -60,6 +60,8 @@ export const fetchProducts = async (where:Partial<IProduct> = {}) => {
   }
 }
 
+
+
 export const postReview = async (review: { product_id: string, review: string }) => {
   try {
     const response = await fetch(`${serverURL}product/reviews`, {

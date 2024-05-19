@@ -1,14 +1,11 @@
-export type liveSreamStatus = {
-  live: 'live',
-  offline: 'offline'
+import { User } from "./user";
 
-};
-//also change in the livestream model
 export interface ILivestream {
   id: number;
   user_id: number;
   uuid:string
   status?:'live'|'offline';
+
   user?:User;
 
   deleted: boolean;
