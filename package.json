@@ -11,7 +11,8 @@
     "sequelize-typescript": "^2.1.6",
     "stream-chat": "^8.33.0",
     "stream-chat-react": "^11.18.1",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^2.3.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/sequelize": "^4.28.20"

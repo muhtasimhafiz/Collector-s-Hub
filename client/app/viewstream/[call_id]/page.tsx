@@ -9,15 +9,16 @@ import '@stream-io/video-react-sdk/dist/css/styles.css';
 import 'stream-chat-react/dist/css/index.css';
 
 const apiKey = 'mmhfdzb5evj2'; // the API key can be found in the "Credentials" section
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiS2ktQWRpLU11bmRpIiwiaXNzIjoiaHR0cHM6Ly9wcm9udG8uZ2V0c3RyZWFtLmlvIiwic3ViIjoidXNlci9LaS1BZGktTXVuZGkiLCJpYXQiOjE3MTYwMjIxMTYsImV4cCI6MTcxNjYyNjkyMX0.G0D3ZRZd-nwuRtlvRhBT6B_T3UlLnjDxYaXD0TNqC8E'; // the token can be found in the "Credentials" section
-const userId = 'Ki-Adi-Mundi'; // the user id can be found in the "Credentials" section
-const callId = 'RHimLHqfasdfaTp9k1'; // the call id can be found in the "Credentials" section
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiQ2FsbGlzdGFfTWluZyIsImlzcyI6Imh0dHBzOi8vcHJvbnRvLmdldHN0cmVhbS5pbyIsInN1YiI6InVzZXIvQ2FsbGlzdGFfTWluZyIsImlhdCI6MTcxNjA5NzYzMywiZXhwIjoxNzE2NzAyNDM4fQ.m1Mn7kl-8hnhj5BgOhsZH0xgeUjiIgExjBUpDjxgLqM'; // the token can be found in the "Credentials" section
+const userId = 'Callista_Ming'; // the user id can be found in the "Credentials" section
+const callId = '6d48b08d-6e75-45a8-ad7a-3a8d34a63d99'; // the call id can be found in the "Credentials" section
+
 const chatToken = token;
 const chatApiKey = apiKey;
 // set up the user object
 const user: User = {
   id: userId,
-  name: 'Oliver-Viewer',
+  name: 'Oliver-Viewer123213',
   image: 'https://getstream.io/random_svg/?id=oliver&name=Oliver-Viewer',
 };
 
