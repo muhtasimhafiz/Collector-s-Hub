@@ -59,7 +59,7 @@ export const placeBid = async (req: Request, res: Response) => {
     const { product_id } = req.params;
     // find the highest bid for the product thats still pending
     const product = await Product.findByPk(product_id);
-    if (!product ||  product.bidding === false) return res.status(400).json({ message: 'Bidding is closed for this product' });
+    if (!product || product.bidding === false) return res.status(400).json({ message: 'Bidding is closed for this product' });
     const highestBid = await ProductBid.findOne({
       where: {
         status: 'pending',
@@ -83,8 +83,22 @@ export const placeBid = async (req: Request, res: Response) => {
     if (!user_id) throw new Error('User not found');
 
     if (highestBid &&
-      req.body.bid_price <= highestBid.bid_price) {
+      req.body.bid_price < highestBid.bid_price) {
       return res.status(400).json({ message: 'Bid price must be greater than the highest bid' });
+    }
+
+    const existingProductBid = await ProductBid.findOne({
+      where: {
+        user_id,
+        product_id: Number(product_id),
+        status: 'pending'
+      }
+    });
+
+    if (existingProductBid) {
+      existingProductBid.bid_price = req.body.bid_price;
+      await existingProductBid.save();
+      return res.status(201).json({ existingProductBid });
     }
     const productBid = await ProductBidService.create(req,
       {
@@ -100,3 +114,23 @@ export const placeBid = async (req: Request, res: Response) => {
   }
 }
 
+export const getHighestBidsByUser = async (req: Request, res: Response) => {
+  try {
+    const { user_id } = req.params;
+    console.log(user_id);
+    const highestBids = await ProductBidService.findHighestBidsBySeller(req, Number(user_id));
+    return res.status(200).json(highestBids);
+  } catch (error: any) {
+    return res.status(400).json({ message: error.message });
+  }
+}
+
+export const acceptBid = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const productBid = await ProductBidService.acceptBid(req, Number(id));
+    return res.status(200).json(productBid);
+  } catch (error: any) {
+    return res.status(400).json({ message: error.message });
+  }
+}

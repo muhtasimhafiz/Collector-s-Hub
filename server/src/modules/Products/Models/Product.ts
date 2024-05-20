@@ -6,6 +6,7 @@ import { ProductJoinCategory } from './ProductJoinCategory';
 import { User } from '../../Users/models/User';
 import { ProductReview } from './ProductReview';
 import { AllowNull } from 'sequelize-typescript';
+import { IProductBid } from '../../ProductBid/types';
 
 export type ProductCreationAttributes = Optional<IProduct, 'id' | 'status' | 'bidding' | 'ratings' | 'quantity' | 'currency' | 'created_by' | 'updated_by' | 'deleted'>;
 export class Product extends Model<IProduct, ProductCreationAttributes> {
@@ -16,6 +17,22 @@ export class Product extends Model<IProduct, ProductCreationAttributes> {
   public seller_id!: number;
   public price!: number;
   public bidding!: boolean;
+
+  
+  public ratings?: number;
+  public quantity?: number;
+  public currency?: string;
+  public image!: string;
+  public deleted!: boolean;
+  public deleted_at?: Date | null;
+  public deleted_by?: number | null;
+  public created_at?: Date;
+  public created_by!: number | null;
+  public updated_at?: Date | null;
+  public updated_by!: number | null;
+  public reviews!: ProductReview[];
+  public bids!: IProductBid[];
+
 }
 
 Product.init({

@@ -20,7 +20,7 @@ const NavBar = () => {
   };
 
   return (
-    <div className="fixed w-full z-10 bottom-0 md:top-0 md:bottom-auto">
+    <div className="w-full sm:bottom-auto">
       <nav className="bg-white shadow-md border-2 text-black p-3 flex justify-between items-center rounded-full mx-10">
         <div className="flex items-center">
           {/* Icon on the left */}

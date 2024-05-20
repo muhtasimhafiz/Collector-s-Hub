@@ -1,3 +1,5 @@
+import { IProductBid } from "../../ProductBid/types";
+
 export interface IProduct {
   id: number;
   name:string,
@@ -11,6 +13,8 @@ export interface IProduct {
   quantity?: number;
   currency?: string;
   
+  highestBid?: IProductBid;
+  bids?: IProductBid[];
 
   deleted: boolean;
   deleted_at?: Date | null;

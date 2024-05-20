@@ -34,7 +34,7 @@ export default function Home() {
     getProducts();
   }, []);
   return (
-    <main className="flex min-h-screen flex-col gap-1 items-center justify-center p-4 md:p-24">
+    <main className="flex min-h-full flex-col gap-1 items-center justify-center p-4 md:p-24">
       {/* <div className="h-[50rem] w-full dark:bg-black bg-white  dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative flex items-center justify-center"> */}
       {loading ? (
         <div>

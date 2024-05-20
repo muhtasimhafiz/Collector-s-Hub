@@ -16,6 +16,8 @@ export class ProductBid extends Model<IProductBid, ProductBidCreationAttributes>
   public bid_price!: number;
   public status!: 'accepted' | 'pending' | 'rejected';
   public deleted!: boolean;
+
+  public product?: Product;
   public deleted_at?: Date | null;
   public deleted_by?: number | null;
   public created_at?: Date;
@@ -23,6 +25,7 @@ export class ProductBid extends Model<IProductBid, ProductBidCreationAttributes>
   public updated_at?: Date | null;
   public updated_by!: number | null;
   public message?: string;
+  public user?:User;
 }
 
 ProductBid.init({

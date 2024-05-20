@@ -1,4 +1,4 @@
-import { IProduct } from "@/types/product";
+import { IProduct, IProductBid } from "@/types/product";
 import { serverURL } from "@/utils/utility";
 
 export const fetchProductCategory = async () => {
@@ -18,6 +18,19 @@ export const createDropdownOptions = <T, K extends keyof T>(array: T[], valueKey
     label: item[labelKey],
   }));
 };
+
+
+export const fetchProductBidsWhere = async (where: Partial<IProductBid> = {}) => {
+  try {
+    const queryParams = new URLSearchParams(where as any).toString();
+    const response = await fetch(`${serverURL}product-bid?${queryParams}`);
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message };
+  }
+}
 
 
 

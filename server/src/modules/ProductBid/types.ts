@@ -1,7 +1,15 @@
-export type ProductBidStatus = {
+import { IProduct } from "../Products/interfaces/IProduct";
+
+export interface IProductBidStatus  {
   accepted: 'accepted';
   pending: 'pending';
   rejected: 'rejected';
+};
+
+export const ProductBidStatus: IProductBidStatus = {
+  accepted: 'accepted',
+  pending: 'pending',
+  rejected: 'rejected'
 };
 
 export interface IProductBid {
@@ -14,6 +22,7 @@ export interface IProductBid {
 
 
   product?: IProduct;
+  user?: User;
   deleted: boolean;
   deleted_at?: Date | null;
   deleted_by?: number | null;

@@ -33,6 +33,7 @@ import { cldUpload } from "@/Services/cloudinary";
 import { updateUser } from "@/Services/userService";
 import Multiloader from "@/components/ui/Multiloader";
 import { Divide } from "lucide-react";
+import BidTable from "@/components/account/BidTable";
 
 interface AccountDetailProps {
   params: { id: string };
@@ -51,7 +52,9 @@ export default function Page({ params }: AccountDetailProps) {
   const [OpenDialog, setOpenDialog] = useState(false);
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState<string | StaticImageData>(avatar);
-  const [ProfileImage, setProfileImage] = useState<string | StaticImageData>(avatar);
+  const [ProfileImage, setProfileImage] = useState<string | StaticImageData>(
+    avatar
+  );
   const [dialogeLoading, setDialogeLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(fileUploadSchema),
@@ -104,6 +107,17 @@ export default function Page({ params }: AccountDetailProps) {
         </div>
       ),
     },
+
+    {
+      title: "Pending Bids",
+      value: "pending_bids",
+      content: (
+        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
+          <p>Pending Bids</p>
+          <PendingBids user={account} />
+        </div>
+      ),
+    },
   ];
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +158,7 @@ export default function Page({ params }: AccountDetailProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col container mx-auto p-4">
+    <div className="min-h-full flex flex-col container mx-auto p-4">
       <div className="flex flex-col items-center mb-8">
         <div className="relative w-32 h-32" onClick={handleImageClick}>
           <Image
@@ -236,6 +250,17 @@ const DummyContent = ({ products }: { products: IProduct[] }) => {
           </div>
         </div>
       ))}
+    </div>
+  );
+};
+
+const PendingBids = ({ user }: { user: User }) => {
+  return (
+    <div
+      className="border-2 shadow bg-grey-600 min-h-full w-full rounded-2xl p-4 m-0 min-w-full flex flex-row flex-wrap overflow-y-scroll justify-around"
+      // style={{ maxHeight: "200px" }}
+    >
+      <BidTable user={user} />
     </div>
   );
 };

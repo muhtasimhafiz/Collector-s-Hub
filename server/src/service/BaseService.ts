@@ -28,7 +28,7 @@ class BaseService<T extends Model> {
       throw new Error(`Error creating the ${this.model.name}`);
     }
   }
-
+// add arguments for associations 
   async findAll(req:Request|null,options: FindOptions = {}): Promise<T[]> {
     try {
       const data = await this.model.findAll(options);

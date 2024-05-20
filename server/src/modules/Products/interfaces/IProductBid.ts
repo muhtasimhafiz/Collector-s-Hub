@@ -1,3 +1,9 @@
+import { IProduct } from "./IProduct";
+
+export interface ProductBidStatus {
+  accepeted:"accepted";
+  pending:"pending";
+}
 export interface IProductBid {
   id:number;
   product_id:number;
@@ -16,4 +22,22 @@ export interface IProductBid {
   deleted_at?: Date;
   updated_at?: Date;
   updated_by?: number;
+}
+
+export  interface ProductWithHighestBid {
+  highestBid: IProductBid;
+  // user:User;
+  product_id: number;
+  product_name: string;
+  product_description?: string;
+  product_image: string;
+}
+
+export interface myHighestBids {
+  product: IProduct;
+  bid_price: number;
+  status: string;
+  message?: string;
+  currenct_high_bid: IProductBid;
+  // current_hight_bidder: User;
 }

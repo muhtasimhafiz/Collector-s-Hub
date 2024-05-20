@@ -14,3 +14,34 @@ export const placeBid = (product_id:number, update:Partial<IProductBid>) => {
     }
   });
 }
+
+export const fetchProductBids = async (where:Partial<IProductBid> = {}) => {
+  try {
+    const queryParams = new URLSearchParams(where as any).toString();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid?${queryParams}`);
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message };
+  }
+}
+
+export const fetchProductBySeller = async (id:number) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/seller/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message };
+  }
+
+}
+
