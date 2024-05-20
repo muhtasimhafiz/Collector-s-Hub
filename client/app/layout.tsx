@@ -8,6 +8,7 @@ import "./globals.css";
 import Provider from "@/hooks/provider";
 // import { NavbarDemo as Navbar } from "@/components/ui/navbar/Navbar";
 import NavBar from "@/components/ui/navbar/NavbarChakra";
+import { Boxes } from "@/components/ui/background-boxes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,8 +27,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
-  
   return (
     <html lang="en">
       <body
@@ -39,7 +38,7 @@ export default function RootLayout({
         <Provider>
           {/* <Navbar/> */}
           <NavBar />
-          <div className="min-h-screen flex items-center justify-center align-center">
+          <div className="min-h-screen flex-col items-center justify-center align-center">
             {children}
           </div>
         </Provider>
