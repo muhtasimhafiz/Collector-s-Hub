@@ -7,6 +7,8 @@ export interface IProductBid {
   status:string;
   item_id?:string;
 
+
+  user?:User;
   created_at?: Date;
   created_by?: number;
   deleted?: boolean;

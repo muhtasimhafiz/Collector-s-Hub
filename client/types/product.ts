@@ -30,6 +30,7 @@ export interface IProductBid {
   bid_price: number;
   status: 'accepted' | 'pending' | 'rejected';
   messaage?: string;
+  user?:User;
   deleted: boolean;
   deleted_at?: Date | null;
   deleted_by?: number | null;

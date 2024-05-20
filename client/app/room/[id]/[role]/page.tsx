@@ -32,11 +32,11 @@ const Page = ({ params }: RoomId) => {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (isMounted && !user?.id) {
-      router.back();
-    }
-  }, [isMounted, user, router]);
+  // useEffect(() => {
+  //   if (isMounted && !user?.id) {
+  //     router.back();
+  //   }
+  // }, [isMounted, user, router]);
 
   if (!isMounted) {
     return null;

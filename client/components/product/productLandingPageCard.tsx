@@ -28,11 +28,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
   const [openBidModal, setOpenBidModal] = useState(false);
+  const [highestBidder, setHighestBidder] = useState<User | null>(null);
+  const { user } = useContext(AuthContext);
+  const [highestBid, setHighestBid] = useState(0);
 
+  useEffect(() => {
+    if (product.bidding && product.bids && product.bids.length > 0) {
+      console.log("checking for highest bidder");
+      const bidder = product.bids?.reduce((prev, current) => {
+        return prev.bid_price > current.bid_price ? prev : current;
+      });
+      if (bidder.user) {
+        setHighestBidder(bidder.user);
+        setHighestBid(bidder.bid_price); 
+      } else {
+        setHighestBid(product.price); 
+      }
+    } else {
+      setHighestBid(product.price);
+    }
+  }, []);
+
+  const updateBidder = (bidder: User) => {
+    setHighestBidder(bidder);
+  };
   return (
     <CardBody className="h-50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
       <CardItem
@@ -57,7 +80,7 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
             src={product.image}
             height="1000"
             width="1000"
-            className="h-40 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+            className="h-40 w-full object-contain rounded-xl group-hover/card:shadow-xl"
             alt="thumbnail"
           />
         </Link>
@@ -70,14 +93,17 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
           // target="__blank"
           className="rounded-xl text-xs font-normal dark:text-white"
         >
-          {product.bidding && (
-            <button
-              onClick={() => setOpenBidModal(true)}
-              className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
-            >
-              Bidding
-            </button>
-          )}
+          {product.bidding &&
+            (user && highestBidder && highestBidder.id === user.id ? (
+              <div>You are the highest bidder</div>
+            ) : (
+              <button
+                onClick={() => setOpenBidModal(true)}
+                className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+              >
+                Bidding
+              </button>
+            ))}
 
           {product.bidding == false && (
             <HoverCard>
@@ -118,13 +144,15 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
           as="button"
           className="px-2 py-1 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
         >
-          $ {Math.round(product.price)}
+          $ {Math.round(highestBid)}
         </CardItem>
       </div>
       <BidModalComponent
         openBidModal={openBidModal}
         setOpenBidBModal={() => setOpenBidModal(!openBidModal)}
         product={product}
+        updateBidder={updateBidder}
+        highestBidder={highestBidder}
       />
     </CardBody>
   );
@@ -139,6 +167,8 @@ import Multiloader from "../ui/Multiloader";
 import toast from "react-hot-toast";
 import { Textarea } from "../ui/textarea";
 import { placeBid } from "@/Services/products/productBidService";
+import { User } from "@/types/user";
+import { AuthContext } from "@/hooks/auth/AuthProvider";
 // import {
 //   Form,
 //   FormControl,
@@ -159,20 +189,24 @@ export const BidModalComponent = ({
   openBidModal,
   setOpenBidBModal,
   product,
+  updateBidder,
+  highestBidder,
 }: {
   openBidModal: boolean;
   setOpenBidBModal: () => void;
+  updateBidder: (bidder: User) => void;
   product: IProduct;
+  highestBidder: User | null;
 }) => {
-  console.log(product);
+  // console.log(product);
   const [highestBid, setHighestBid] = useState(0);
   const [loading, setLoading] = useState(false);
-
+  const { user } = useContext(AuthContext);
   const biddingFormSchema = z.object({
-    bid_price: z.coerce.number().min(highestBid, {
-      message: "Bid price must be equal | greater than the highest bid",
+    bid_price: z.coerce.number().min(highestBid + 1, {
+      message: "Bid price must be greater than the highest bid",
     }),
-    message:z.string().optional(),
+    message: z.string().optional(),
   });
 
   const form = useForm({
@@ -185,14 +219,18 @@ export const BidModalComponent = ({
 
   useEffect(() => {
     if (product && product.bids?.length > 0) {
-      const highestBid = product.bids.reduce((prev, current) => {
+      console.log("checking for highest bid");
+      const bid = product.bids.reduce((prev, current) => {
         return prev.bid_price > current.bid_price ? prev : current;
       });
-      setHighestBid(highestBid.bid_price);
-    }
 
-    if (product && highestBid === 0) {
-      setHighestBid(product.price);
+      if (bid) {
+        console.log("placing bids");
+        console.log(bid.bid_price);
+        setHighestBid(bid.bid_price);
+      } else {
+        setHighestBid(product.price);
+      }
     }
   }, []);
 
@@ -202,6 +240,10 @@ export const BidModalComponent = ({
       const response = await placeBid(product.id, values);
       setLoading(false);
       setOpenBidBModal();
+
+      if (user) {
+        updateBidder(user);
+      }
       toast.success("Bid placed successfully");
     } catch (error: any) {
       setLoading(false);
@@ -215,6 +257,9 @@ export const BidModalComponent = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Place Bid for {product.name}</DialogTitle>
+          <DialogTitle>
+            Highest bidder {highestBidder?.username ?? "N/A"}
+          </DialogTitle>
         </DialogHeader>
         {loading == true ? (
           <Multiloader run={loading} />
@@ -236,38 +281,38 @@ export const BidModalComponent = ({
             </CardItem>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                <DialogDescription>
-                  <h1>Place your bid: {highestBid}</h1>
-                  <FormField
-                    control={form.control}
-                    name="bid_price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Price(USD)</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl>
+                {/* <DialogDescription> */}
+                Place your bid: {highestBid}
+                <FormField
+                  control={form.control}
+                  name="bid_price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price(USD)</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
                         <Textarea {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <DialogFooter className="mt-2">
-                    <Button type="submit">Place Bid</Button>
-                  </DialogFooter>
-                </DialogDescription>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter className="mt-2">
+                  <Button type="submit">Place Bid</Button>
+                </DialogFooter>
+                {/* </DialogDescription> */}
               </form>
             </Form>
           </div>

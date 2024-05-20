@@ -1,7 +1,7 @@
 import { IProductBid } from "@/types/product"
 
 export const placeBid = (product_id:number, update:Partial<IProductBid>) => {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/product-bid/place-bid/${product_id}`, {
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/place-bid/${product_id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

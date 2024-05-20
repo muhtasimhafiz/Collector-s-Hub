@@ -47,6 +47,7 @@ class ProductService {
             {
               model: ProductBid,
               as: 'bids',
+              include: ['user'],
               required: false,
             }
           ]
