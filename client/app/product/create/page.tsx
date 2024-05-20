@@ -21,7 +21,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 // import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -31,6 +31,7 @@ import {
   createProduct,
   fetchProductCategory,
 } from "@/Services/products/product";
+import { Checkbox } from "@chakra-ui/react";
 // import { Currency } from "lucide-react";
 
 export const formSchema = z.object({
@@ -57,7 +58,7 @@ export const formSchema = z.object({
   // seller_id: z.coerce.number().min(1, "Seller is required"),
   seller_id: z.coerce.number(),
 
-  currency: z.string()
+  currency: z.string(),
 });
 
 export default function Page() {
@@ -142,9 +143,11 @@ export default function Page() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+    // return;
     try {
       setLoading(true);
-      values.seller_id = user?.id??0;
+      values.seller_id = user?.id ?? 0;
       try {
         if (user) {
           let data = await cldUpload(values.image, user.id);
@@ -156,7 +159,7 @@ export default function Page() {
       }
 
       setLoading(false);
-      // router.push(`/product/${data.id}`);
+      router.push(`/product/${data.id}`);
     } catch (error: any) {
       console.error(error);
       setLoading(false);
@@ -164,7 +167,7 @@ export default function Page() {
   };
 
   return (
-<div className="bg-white rounded shadow p-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:h-auto">
+    <div className="bg-white rounded shadow p-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:h-auto">
       <div className="self-start">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -292,7 +295,11 @@ export default function Page() {
                     Bidding?
                   </FormLabel>
                   <FormControl>
-                    <Checkbox {...field} value={field.value ? "true" : "false"} />
+                    <Checkbox
+                      {...field}
+                      checked={true}
+                      // onChange={(e) => field.onChange(e.target.checked)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

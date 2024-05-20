@@ -103,7 +103,7 @@ export default function Component({
           </div>
         )}
         <div className="space-y-6">
-          {reviewList.map((review) => (
+          {reviewList && reviewList.map((review) => (
             <div
               key={review.id}
               className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md"

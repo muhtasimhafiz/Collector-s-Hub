@@ -9,6 +9,8 @@ import Provider from "@/hooks/provider";
 // import { NavbarDemo as Navbar } from "@/components/ui/navbar/Navbar";
 import NavBar from "@/components/ui/navbar/NavbarChakra";
 import { Boxes } from "@/components/ui/background-boxes";
+import { Toaster } from 'react-hot-toast';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,7 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background  font-sans antialiased flex flex-col justify-center align-center",
+          "min-h-screen bg-background  font-sans antialiased flex flex-col  justify-center align-center",
           fontSans.variable
         )}
       >
@@ -41,6 +43,8 @@ export default function RootLayout({
           <div className="min-h-screen flex-col items-center justify-center align-center">
             {children}
           </div>
+          <Toaster />
+
         </Provider>
       </body>
     </html>

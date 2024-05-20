@@ -2,7 +2,7 @@ export interface IProductBid {
   id:number;
   product_id:number;
   user_id:number;
-  price?:number;
+  bid_price?:number;
   currency?:string;
   status:string;
   item_id?:string;

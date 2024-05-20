@@ -4,6 +4,8 @@ import { Request } from 'express';
 import { ProductCategory } from '../models/ProductCategory';
 import { ProductJoinCategory } from '../models/ProductJoinCategory';
 import { sequelize } from '../../../../config/database';
+import { ProductBid } from '../../ProductBid/models/ProductBid';
+import { User } from '../../Users/models/User';
 
 
 interface Category_id {
@@ -39,13 +41,18 @@ class ProductService {
           where: query,
           include: [
             {
-              model: ProductCategory,
-              through: { attributes: [] }, 
+              model: User,
+              as: 'seller'
             },
-            'seller'
+            {
+              model: ProductBid,
+              as: 'bids',
+              required: false,
+            }
           ]
         }
       );
+
       return products;
     } catch (error: any) {
       

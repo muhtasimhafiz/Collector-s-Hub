@@ -10,6 +10,7 @@ export interface IProduct {
   ratings?: number;
   quantity?: number;
   currency?: string;
+  
   deleted: boolean;
   deleted_at?: Date | null;
   deleted_by?: number | null;

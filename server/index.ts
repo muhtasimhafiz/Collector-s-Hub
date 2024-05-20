@@ -5,6 +5,8 @@ import userRoutes from './src/modules/Users/routes/userRoutes';  // Adjust path 
 import productRoutes from './src/modules/Products/routes/productRoutes';  // Adjust path as needed
 import productCategoryRoutes from './src/modules/Products/routes/productCategoryRoutes';  // Adjust path as needed
 import liveStreamRoutes from './src/modules/Livestreams/livestreamRoutes';  // Adjust path as needed
+import ProductBidRoutes from './src/modules/ProductBid/productBidRoutes';  // Adjust path as needed
+
 import { config } from 'dotenv';
 import path from 'path';
 
@@ -44,6 +46,7 @@ initializeDatabase().then(() => {
     app.use('/api', productRoutes);
     app.use('/api',productCategoryRoutes);
     app.use('/api', liveStreamRoutes)
+    app.use('/api', ProductBidRoutes)
 
     app.listen(port, () => {
         console.log(`Server running on http://localhost:${port}`);

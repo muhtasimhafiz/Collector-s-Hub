@@ -1,64 +1,77 @@
-import { Model } from 'sequelize';
+import { Model, FindOptions, CreateOptions, UpdateOptions, DestroyOptions, ModelCtor } from 'sequelize';
 import { Request } from 'express';
 
-abstract class BaseService<T extends Model> {
-  protected model: typeof Model & { new(): T };
+class BaseService<T extends Model> {
+  protected model: ModelCtor<T>;
 
-  constructor(model: typeof Model & { new(): T }) {
+  constructor(model: ModelCtor<T>) {
     this.model = model;
   }
+  // constructor(model: { new (): T }) {
+  //   this.model = model;
+  //   console.log(model);
+  // }
 
-  async create(req: Request | null, details: Partial<T>): Promise<T> {
-    let user_id = null;
-    if ((req as any).user) {
+  async create(req: Request | null, createAttrs: any): Promise<T> {
+    try {
+      let user_id = null;
+      if (req && (req as any).user) {
         user_id = (req as any).user.id;
+      }
+      if (!user_id) throw new Error('User not found');
+      createAttrs.created_by = user_id;
+
+      const instance = await this.model.create(createAttrs);
+      return instance.reload({ include: 'user' });
+    } catch (error) {
+      throw new Error(`Error creating the ${this.model.name}`);
     }
-    if(!user_id) throw new Error('User not found');
-    const entity = await this.model.create({ ...details, created_by: user_id });
-    return entity;
   }
 
-  // other methods...
-  async getAll(where: Partial<T>): Promise<T[]> {
-    const entities = await this.model.findAll({ where });
-    return entities;
-  }
-
-  async getById(id: number): Promise<T | null> {
-    const entity = await this.model.findByPk(id);
-    return entity;
-  }
-
-  async update(id: number, details: Partial<T>): Promise<T | null> {
-    const entity = await this.model.findByPk(id);
-    if (entity) {
-      await entity.update(details);
-      return entity;
+  async findAll(req:Request|null,options: FindOptions = {}): Promise<T[]> {
+    try {
+      const data = await this.model.findAll(options);
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error(`Error retrieving ${this.model.name} instances:`, error);
+      throw new Error(`Error retrieving ${this.model.name} instances`);
     }
-    return null;
   }
 
-  async delete(id: number): Promise<T | null> {
-    const entity = await this.model.findByPk(id);
-    if (entity) {
-      await entity.update({ deleted: true });
-      return entity;
+  async findById(req:Request|null,id: number, options: FindOptions = {}): Promise<T | null> {
+    try {
+      return await this.model.findByPk(id, options);
+    } catch (error) {
+      throw new Error(`Error retrieving ${this.model.name} instance`);
     }
-    return null;
+  }
+
+  async update(req:Request|null,id: number, updateAttrs: Partial<T>, options: UpdateOptions = {where:{}}): Promise<T | null> {
+    try {
+      const instance = await this.model.findByPk(id);
+      if (instance) {
+        await instance.update(updateAttrs, options);
+        return instance;
+      }
+      return null;
+    } catch (error) {
+      throw new Error(`Error updating the ${this.model.name} instance`);
+    }
+  }
+
+  async delete(req:Request|null,id: number, options: DestroyOptions = {}): Promise<T | null> {
+    try {
+      const instance = await this.model.findByPk(id);
+      if (instance) {
+        await instance.update({ deleted: true }, options);
+        return instance;
+      }
+      return null;
+    } catch (error) {
+      throw new Error(`Error deleting the ${this.model.name} instance`);
+    }
   }
 }
 
 export default BaseService;
-
-
-//Usage
-/* import BaseService from './BaseService';
-import { ProductReview, ProductReviewCreationAttributes } from "../models/ProductReview";
-
-class ProductReviewService extends BaseService<ProductReview, ProductReviewCreationAttributes> {
-  constructor() {
-    super(ProductReview);
-  }
-}
-
-export default new ProductReviewService(); */
