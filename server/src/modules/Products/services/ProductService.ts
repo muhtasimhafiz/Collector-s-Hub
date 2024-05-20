@@ -62,6 +62,7 @@ class ProductService {
   }
 
   async getProductById(productId: number): Promise<Product | null> {
+    console.log(productId)
     try {
       const product = await Product.findByPk(productId,
         {
@@ -71,7 +72,7 @@ class ProductService {
               through: { attributes: [] }, // This will skip the join table attributes
             },
             'seller',
-           {association: 'reviews', include: ['user']}
+           {association: 'reviews', include: ['user'], required: false},
           ]
         }
       );

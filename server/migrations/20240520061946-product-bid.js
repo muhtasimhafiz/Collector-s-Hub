@@ -41,6 +41,10 @@ module.exports = {
         allowNull: true
       },
 
+      message: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
       deleted: {
         type: Sequelize.BOOLEAN,
         defaultValue: false

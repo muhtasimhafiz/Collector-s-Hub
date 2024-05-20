@@ -24,6 +24,7 @@ class BaseService<T extends Model> {
       const instance = await this.model.create(createAttrs);
       return instance.reload({ include: 'user' });
     } catch (error) {
+      console.error(error);
       throw new Error(`Error creating the ${this.model.name}`);
     }
   }

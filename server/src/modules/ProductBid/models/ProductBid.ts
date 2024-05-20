@@ -6,7 +6,7 @@ import { User } from "../../Users/models/User";
 import { sequelize } from '../../../../config/database';
 
 
-export type ProductBidCreationAttributes = Optional<IProductBid, 'id' | 'deleted'>;
+export type ProductBidCreationAttributes = Optional<IProductBid, 'id' | 'deleted'|'message'>;
 
 
 export class ProductBid extends Model<IProductBid, ProductBidCreationAttributes> {
@@ -22,6 +22,7 @@ export class ProductBid extends Model<IProductBid, ProductBidCreationAttributes>
   public created_by!: number | null;
   public updated_at?: Date | null;
   public updated_by!: number | null;
+  public message?: string;
 }
 
 ProductBid.init({
@@ -53,6 +54,11 @@ ProductBid.init({
     type: DataTypes.ENUM('accepted', 'pending', 'rejected'),
     allowNull: false,
     defaultValue: 'pending',
+  },
+
+  message: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 
   deleted: {

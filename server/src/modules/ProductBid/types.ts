@@ -10,7 +10,10 @@ export interface IProductBid {
   user_id: number;
   bid_price: number;
   status: 'accepted' | 'pending' | 'rejected';
+  message?: string;
 
+
+  product?: IProduct;
   deleted: boolean;
   deleted_at?: Date | null;
   deleted_by?: number | null;

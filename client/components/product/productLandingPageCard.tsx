@@ -137,6 +137,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Multiloader from "../ui/Multiloader";
 import toast from "react-hot-toast";
+import { Textarea } from "../ui/textarea";
+import { placeBid } from "@/Services/products/productBidService";
 // import {
 //   Form,
 //   FormControl,
@@ -168,14 +170,16 @@ export const BidModalComponent = ({
 
   const biddingFormSchema = z.object({
     bid_price: z.coerce.number().min(highestBid, {
-      message: "Bid price must be greater than the highest bid",
+      message: "Bid price must be equal | greater than the highest bid",
     }),
+    message:z.string().optional(),
   });
 
   const form = useForm({
     resolver: zodResolver(biddingFormSchema),
     defaultValues: {
       bid_price: highestBid,
+      message: "",
     },
   });
 
@@ -194,9 +198,15 @@ export const BidModalComponent = ({
 
   const onSubmit = async (values: z.infer<typeof biddingFormSchema>) => {
     try {
-      
+      setLoading(true);
+      const response = await placeBid(product.id, values);
+      setLoading(false);
+      setOpenBidBModal();
+      toast.success("Bid placed successfully");
     } catch (error: any) {
-      
+      setLoading(false);
+      console.error("Error placing bid:", error.message);
+      toast.error("Failed to place bid");
     }
   };
 
@@ -204,34 +214,63 @@ export const BidModalComponent = ({
     <Dialog open={openBidModal} onOpenChange={setOpenBidBModal}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Bid </DialogTitle>
+          <DialogTitle>Place Bid for {product.name}</DialogTitle>
         </DialogHeader>
         {loading == true ? (
           <Multiloader run={loading} />
         ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <DialogDescription>
-                <p>Place your bid: {highestBid}</p>
-                <FormField
-                  control={form.control}
-                  name="bid_price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price(USD)</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+          <div>
+            <CardItem translateZ="100" className="w-full mt-2">
+              <Link
+                href={`/product/${product.id}`}
+                // href={`/product/${product.id}`}
+              >
+                <Image
+                  src={product.image}
+                  height="1000"
+                  width="1000"
+                  className="h-40 w-full object-contain rounded-xl group-hover/card:shadow-xl"
+                  alt="thumbnail"
                 />
-                <DialogFooter>
-                  <Button type="submit">Place Bid</Button>
-                </DialogFooter>
-              </DialogDescription>
-            </form>
-          </Form>
+              </Link>
+            </CardItem>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <DialogDescription>
+                  <h1>Place your bid: {highestBid}</h1>
+                  <FormField
+                    control={form.control}
+                    name="bid_price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price(USD)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Message</FormLabel>
+                        <FormControl>
+                        <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <DialogFooter className="mt-2">
+                    <Button type="submit">Place Bid</Button>
+                  </DialogFooter>
+                </DialogDescription>
+              </form>
+            </Form>
+          </div>
         )}
       </DialogContent>
     </Dialog>

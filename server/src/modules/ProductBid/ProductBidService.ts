@@ -16,6 +16,8 @@ import {Request} from 'express';
 //   }
 // }
 
+
+
 class ProductBidService extends BaseService<ProductBid> {
   // private model: Model<Product,>;
   constructor() {

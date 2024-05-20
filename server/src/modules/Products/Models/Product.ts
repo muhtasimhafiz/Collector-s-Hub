@@ -15,6 +15,7 @@ export class Product extends Model<IProduct, ProductCreationAttributes> {
   public status!: 'active' | 'inactive' | 'archived';
   public seller_id!: number;
   public price!: number;
+  public bidding!: boolean;
 }
 
 Product.init({
@@ -50,7 +51,7 @@ Product.init({
     }
   },
   bidding: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
   price: {
