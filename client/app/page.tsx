@@ -35,7 +35,11 @@ export default function Home() {
   }, []);
   return (
     <main className="flex min-h-screen flex-col gap-1 items-center justify-center p-4 md:p-24">
-      {loading ? (
+      {/* <div className="h-[50rem] w-full dark:bg-black bg-white  dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative flex items-center justify-center"> */}
+        {/* Radial gradient for the container to give a faded look */}
+        {/* <Boxes className="h-full w-full" /> */}
+        {/* <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div> */}
+        {loading ? (
         <div>
           <Multiloader run={loading} />
         </div>
@@ -47,7 +51,7 @@ export default function Home() {
             </h1>
           </div>
           {/* streaming */}
-            <Stream />
+          <Stream />
           {/* Product Listing page */}
           <div className="w-full">
             <h2 className="font-bold text-lg mb-2">Products</h2>
@@ -65,6 +69,9 @@ export default function Home() {
           </div>
         </div>
       )}
+      {/* </div> */}
+
+
     </main>
   );
 }

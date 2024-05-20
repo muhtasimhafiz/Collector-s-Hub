@@ -4,7 +4,7 @@ import { InputGroup, InputLeftElement, Input, Icon } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
 import { Router } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
 
@@ -12,7 +12,12 @@ const NavBar = () => {
   const { user } = useContext(AuthContext);
   // const router = useRouter();
   // const uniqueId = uuidv4();
-  const [uniqueId, setUniqueId] = useState<string>(uuidv4());
+  // const [uniqueId, setUniqueId] = useState<string>(uuidv4());
+  const router = useRouter();
+  const goLive = () => {
+    const uniqueId = uuidv4();
+    router.push(`/room/${uniqueId}/host`);
+  };
 
   return (
     <div className="fixed w-full z-10 bottom-0 md:top-0 md:bottom-auto">
@@ -42,14 +47,21 @@ const NavBar = () => {
           {/* Login Button */}
           {user ? (
             <div>
-              <Link href={`/room/${uniqueId}/host`}>
-                <button className="mr-2 px-4 py-2 rounded-md border border-black bg-white text-red-500 text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200">
-                  Go Live
-                </button>
-              </Link>
+              {/* <Link href={`/room/${uniqueId}/host`}> */}
+              <button
+                onClick={goLive}
+                className="mr-2 px-4 py-2 rounded-md border border-black bg-white text-red-500 text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+              >
+                Go Live
+              </button>
+              {/* </Link> */}
 
               <span className="text-gray-700 font-semibold">
-                Hello {user.username}
+                <Link href={`/account/${user.id}`}>
+                  <button className="mr-2 px-4 py-2 rounded-md border border-black bg-white text-green-500 text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200">
+                    Hello {user.username}
+                  </button>
+                </Link>
               </span>
             </div>
           ) : (
