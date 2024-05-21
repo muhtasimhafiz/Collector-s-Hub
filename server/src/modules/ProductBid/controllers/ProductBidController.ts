@@ -107,7 +107,7 @@ export const placeBid = async (req: Request, res: Response) => {
         ...req.body,
         product_id: Number(product_id)
       });
-    return res.status(201).json({ productBid });
+    return res.status(201).json(productBid);
   } catch (error: any) {
     console.log(error);
     return res.status(400).json({ message: "error placing bids" });
@@ -126,6 +126,7 @@ export const getHighestBidsByUser = async (req: Request, res: Response) => {
 }
 
 export const acceptBid = async (req: Request, res: Response) => {
+  console.log("accept bid");
   try {
     const { id } = req.params;
     const productBid = await ProductBidService.acceptBid(req, Number(id));

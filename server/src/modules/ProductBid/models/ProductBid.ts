@@ -54,7 +54,7 @@ ProductBid.init({
   },
 
   status: {
-    type: DataTypes.ENUM('accepted', 'pending', 'rejected'),
+    type: DataTypes.ENUM('pending', 'accepted', 'rejected', 'completed', 'cancelled'),
     allowNull: false,
     defaultValue: 'pending',
   },

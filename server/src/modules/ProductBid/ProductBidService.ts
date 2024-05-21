@@ -198,26 +198,28 @@ class ProductBidService extends BaseService<ProductBid> {
           }
         ]
       });
+
       if (!productBid) {
         throw new Error('Product bid not found');
       }
 
 
-      await ProductBid.update({
-        status: ProductBidStatus.rejected
-      }, {
-        where: {
-          product_id: productBid.product.id,
-          status: ProductBidStatus.pending,
-        }
-      }
-      );
+      //update rest of the bid status to reject
+      // await ProductBid.update({
+      //   status: ProductBidStatus.rejected
+      // }, {
+      //   where: {
+      //     product_id: productBid.product.id,
+      //     status: ProductBidStatus.pending,
+      //   }
+      // }
+      // );
 
       productBid.status = 'accepted';
       await productBid.save();
 
       const product = await Product.findByPk(productBid.product_id);
-      if (!product) {
+      if (!product || product.seller_id !== (req as any).user.id) {
         throw new Error('Product not found');
       }
 

@@ -35,10 +35,10 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
   const [highestBidder, setHighestBidder] = useState<User | null>(null);
   const { user } = useContext(AuthContext);
   const [highestBid, setHighestBid] = useState(0);
+  const [bidding, setBidding] = useState(false);
 
   useEffect(() => {
     if (product.bidding && product.bids && product.bids.length > 0) {
-      console.log("checking for highest bidder");
       const bidder = product.bids?.reduce((prev, current) => {
         return prev.bid_price > current.bid_price ? prev : current;
       });
@@ -231,6 +231,8 @@ export const BidModalComponent = ({
       } else {
         setHighestBid(product.price);
       }
+    }else {
+      setHighestBid(product.price);
     }
   }, []);
 

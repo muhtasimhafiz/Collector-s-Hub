@@ -3,6 +3,9 @@ import { IProduct } from "./IProduct";
 export interface ProductBidStatus {
   accepeted:"accepted";
   pending:"pending";
+  rejected:"rejected";
+  completed:"completed";
+  cancelled:"cancelled";
 }
 export interface IProductBid {
   id:number;

@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { User } from "@/hooks/auth/types";
 import { useRouter } from "next/navigation";
@@ -34,6 +34,7 @@ import { updateUser } from "@/Services/userService";
 import Multiloader from "@/components/ui/Multiloader";
 import { Divide } from "lucide-react";
 import BidTable from "@/components/account/BidTable";
+import { AuthContext } from "@/hooks/auth/AuthProvider";
 
 interface AccountDetailProps {
   params: { id: string };
@@ -62,6 +63,8 @@ export default function Page({ params }: AccountDetailProps) {
       image: null,
     },
   });
+
+  const{user} = useContext(AuthContext);
 
   useEffect(() => {
     const getUser = async () => {
@@ -96,6 +99,19 @@ export default function Page({ params }: AccountDetailProps) {
     );
   }
 
+
+
+  const pendingBids =     {
+    title: "Pending Bids",
+    value: "pending_bids",
+    content: (
+      <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
+        <p>Pending Bids</p>
+        <PendingBids user={account} />
+      </div>
+    ),
+  };
+
   const tabs = [
     {
       title: "Product",
@@ -108,17 +124,14 @@ export default function Page({ params }: AccountDetailProps) {
       ),
     },
 
-    {
-      title: "Pending Bids",
-      value: "pending_bids",
-      content: (
-        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
-          <p>Pending Bids</p>
-          <PendingBids user={account} />
-        </div>
-      ),
-    },
+
   ];
+
+
+
+  if( user && account.id === user.id) {
+    tabs.push(pendingBids);
+  }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -166,7 +179,7 @@ export default function Page({ params }: AccountDetailProps) {
             alt="User Avatar"
             className="rounded-full"
             layout="fill"
-            objectFit="cover"
+            objectFit="contain"
           />
         </div>
         <h1 className="text-2xl font-semibold mt-4">{account.username}</h1>
@@ -235,14 +248,17 @@ const DummyContent = ({ products }: { products: IProduct[] }) => {
       {products.map((product) => (
         <div key={product.id} className="p-2">
           <div className="bg-white rounded-xl">
+            <Link href={`/product/${product.id}`}>
             <Image
               src={product.image} // Replace with dynamic path
               alt="Product Image"
               className="rounded-xl"
-              layout="responsive"
+              // layout="responsive"
+              objectFit="contain"
               width={100}
               height={100}
             />
+            </Link>
 
             <h1 className="text-sm test-black font-semibold mt-2 p-1">
               <Link href={`/product/${product.id}`}>{product.name}</Link>

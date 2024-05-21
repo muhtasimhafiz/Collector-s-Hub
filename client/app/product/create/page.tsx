@@ -70,13 +70,14 @@ export default function Page() {
       description: "",
       price: 0,
       image: null,
-      quantity: 0,
+      quantity: 1,
       category_id: [],
       currency: "USD",
       bidding: false,
       seller_id: user?.id ?? 0,
     },
   });
+  const isBiddingChecked = form.watch("bidding");
 
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -148,6 +149,9 @@ export default function Page() {
     try {
       setLoading(true);
       values.seller_id = user?.id ?? 0;
+      if(values.bidding){
+        values.quantity = 1;
+      }
       try {
         if (user) {
           let data = await cldUpload(values.image, user.id);
@@ -159,7 +163,7 @@ export default function Page() {
       }
 
       setLoading(false);
-      router.push(`/product/${data.id}`);
+      router.push(`/product/${product.id}`);
     } catch (error: any) {
       console.error(error);
       setLoading(false);
@@ -231,19 +235,22 @@ export default function Page() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="quantity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quantity</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
+            {!isBiddingChecked && (
+              <FormField
+                control={form.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quantity</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="image"
@@ -298,7 +305,7 @@ export default function Page() {
                     <Checkbox
                       {...field}
                       checked={true}
-                      // onChange={(e) => field.onChange(e.target.checked)}
+                      onChange={(e) => field.onChange(e.target.checked)}
                     />
                   </FormControl>
                   <FormMessage />

@@ -42,6 +42,40 @@ export const fetchProductBySeller = async (id:number) => {
     console.error(error);
     return { error: error.message };
   }
-
 }
+
+export const acceptBids = async (bids: IProductBid[]) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/accept-bids`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(bids),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message };
+  }
+}
+
+
+
+export const acceptBid = async (id: number) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/accept-bid/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+  } catch {
+    console.error("Failed to accept bid");
+  }
+}
+
 
