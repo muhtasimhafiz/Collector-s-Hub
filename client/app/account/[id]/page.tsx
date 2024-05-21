@@ -36,6 +36,7 @@ import { Divide } from "lucide-react";
 import BidTable from "@/components/account/BidSellerTable";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
 import BidUserTable from "@/components/account/BidUserTable";
+import TransactionTable from "@/components/account/TransactionTable";
 
 interface AccountDetailProps {
   params: { id: string };
@@ -105,27 +106,7 @@ export default function Page({ params }: AccountDetailProps) {
 
 
 
-  const pendingBids =     {
-    title: "Pending Bids",
-    value: "pending_bids",
-    content: (
-      <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
-        <p>Pending Bids</p>
-        <PendingBids user={account} />
-      </div>
-    ),
-  };
 
-  const placedBids =     {
-    title: "Placed Bids",
-    value: "placed_bids",
-    content: (
-      <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-orange-600 bg-white shadow-sm border-2">
-        <p>Placed Bids</p>
-        <PlacedBids user={account} />
-      </div>
-    ),
-  };
 
   const tabs = [
     {
@@ -144,9 +125,46 @@ export default function Page({ params }: AccountDetailProps) {
 
 
 
+
+
   if( user && account.id === user.id) {
+    const pendingBids =     {
+      title: "Pending Bids",
+      value: "pending_bids",
+      content: (
+        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
+          <p>Pending Bids</p>
+          <PendingBids user={account} />
+        </div>
+      ),
+    };
+  
+    const placedBids =     {
+      title: "Placed Bids",
+      value: "placed_bids",
+      content: (
+        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-orange-600 bg-white shadow-sm border-2">
+          <p>Placed Bids</p>
+          <PlacedBids user={account} />
+        </div>
+      ),
+    };
+
+    const transactionTable =     {
+      title: "Transaction Table",
+      value: "transaction_table",
+      content: (
+        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-orange-600 bg-white shadow-sm border-2">
+          <p>Transaction</p>
+          <Transactions user={account} />
+        </div>
+      ),
+    };
+
+
     tabs.push(pendingBids);
     tabs.push(placedBids)
+    tabs.push(transactionTable)
   }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -307,3 +325,14 @@ const PlacedBids = ({ user }: { user: User }) => {
     </div>
   );
 };
+
+const Transactions = ({ user }: { user: User }) => {
+  return (
+    <div
+      className="border-2 shadow bg-grey-600 min-h-full w-full rounded-2xl p-4 m-0 min-w-full flex flex-row flex-wrap overflow-y-scroll justify-around"
+      // style={{ maxHeight: "200px" }}
+    >
+      <TransactionTable user={user} />
+    </div>
+  );
+}

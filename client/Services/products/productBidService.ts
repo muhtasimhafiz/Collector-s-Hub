@@ -58,7 +58,7 @@ export const fetchPlacedBids = async (id: number) => {
     const data = await response.json();
     return data;
   } catch (error: any) {
-    
+
     console.error("Failed to fetch bids");
   }
 }
@@ -94,6 +94,22 @@ export const acceptBid = async (id: number) => {
     });
   } catch {
     console.error("Failed to accept bid");
+  }
+}
+
+
+export const getItemsSold = async (query:any) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/items-sold?${query}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error(error);
+    return { error: error.message };
   }
 }
 

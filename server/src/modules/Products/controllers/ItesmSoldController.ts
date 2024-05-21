@@ -5,6 +5,8 @@ import { ProductBid } from "../../ProductBid/models/ProductBid";
 import { Product } from "../models/Product";
 import { sequelize } from "../../../../config/database";
 import { ProductBidStatus } from "../../ProductBid/types";
+import { Op } from "sequelize";
+import { User } from "../../Users/models/User";
 export const createItemsSold = async (req: Request, res: Response) => {
   // try {
   //   const { user_id, product_id } = req.body;
@@ -22,7 +24,47 @@ export const createItemsSold = async (req: Request, res: Response) => {
 
 export const getItemsSold = async (req: Request, res: Response) => {
   try {
-    const itemsSold = await ItemsSold.findAll();
+    const where = ItemsSoldService.parseQueryParams(req.query);
+    const itemsSold = await ItemsSold.findAll(
+      {
+        where: where
+      }
+    );
+    return res.status(200).json(itemsSold);
+  } catch (error: any) {
+    return res.status(400).json({ message: error.message });
+  }
+}
+
+export const getTransactionsByUser = async (req: Request, res: Response) => {
+  try {
+    const user_id = (req as any).user.id;
+    const where = {
+      [Op.or]: [
+        { buyer_id: user_id },
+        { '$product.seller_id$': user_id }
+      ]
+    };
+    const itemsSold = await ItemsSold.findAll({
+      where: where,
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          include: [
+            {
+              model: User,
+              as: 'seller'
+            }
+          ]
+        },
+        {
+          model:User,
+          as:'buyer'
+        }
+
+      ]
+    });
     return res.status(200).json(itemsSold);
   } catch (error: any) {
     return res.status(400).json({ message: error.message });
