@@ -33,8 +33,9 @@ import { cldUpload } from "@/Services/cloudinary";
 import { updateUser } from "@/Services/userService";
 import Multiloader from "@/components/ui/Multiloader";
 import { Divide } from "lucide-react";
-import BidTable from "@/components/account/BidTable";
+import BidTable from "@/components/account/BidSellerTable";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
+import BidUserTable from "@/components/account/BidUserTable";
 
 interface AccountDetailProps {
   params: { id: string };
@@ -74,7 +75,10 @@ export default function Page({ params }: AccountDetailProps) {
         );
         const data: User = await response.json();
 
-        const user_products = await fetchProducts();
+        const user_products = await fetchProducts({
+          seller_id: params.id
+        
+        });
         setProducts(user_products);
         setAccount(data);
 
@@ -112,6 +116,17 @@ export default function Page({ params }: AccountDetailProps) {
     ),
   };
 
+  const placedBids =     {
+    title: "Placed Bids",
+    value: "placed_bids",
+    content: (
+      <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-orange-600 bg-white shadow-sm border-2">
+        <p>Placed Bids</p>
+        <PlacedBids user={account} />
+      </div>
+    ),
+  };
+
   const tabs = [
     {
       title: "Product",
@@ -131,6 +146,7 @@ export default function Page({ params }: AccountDetailProps) {
 
   if( user && account.id === user.id) {
     tabs.push(pendingBids);
+    tabs.push(placedBids)
   }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,6 +293,17 @@ const PendingBids = ({ user }: { user: User }) => {
       // style={{ maxHeight: "200px" }}
     >
       <BidTable user={user} />
+    </div>
+  );
+};
+
+const PlacedBids = ({ user }: { user: User }) => {
+  return (
+    <div
+      className="border-2 shadow bg-grey-600 min-h-full w-full rounded-2xl p-4 m-0 min-w-full flex flex-row flex-wrap overflow-y-scroll justify-around"
+      // style={{ maxHeight: "200px" }}
+    >
+      <BidUserTable user={user} />
     </div>
   );
 };

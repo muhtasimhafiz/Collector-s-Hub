@@ -51,14 +51,15 @@ class ProductBidService extends BaseService<ProductBid> {
               }
             ],
             required: true,
-            order: [
-              ['bid_price', 'DESC']
-            ]
           }
+        ],
+        order: [
+          [{ model: ProductBid, as: 'bids' }, 'bid_price', 'DESC']
         ]
       });
 
-      console.log(products);
+      // console.log(products[0].bids[0]);
+      // return products;
 
 
       interface ProductWithHighestBid {
@@ -103,7 +104,9 @@ class ProductBidService extends BaseService<ProductBid> {
             model: ProductBid,
             as: 'bids',
             where: {
-              status: 'pending'
+              status: {
+                [Op.or]: ['pending', 'completed']
+              }
             },
             include: [
               {
@@ -136,23 +139,48 @@ class ProductBidService extends BaseService<ProductBid> {
   }
 
 
-  async findHighestPlaceBidsByUser(req: Request | null, user_id: number) {
+  async findPlacedBids(req: Request | null, user_id: number) {
     try {
       const productBids = await ProductBid.findAll({
         where: {
           user_id,
-          status: 'pending'
         },
         include: [
           {
             model: Product,
-            as: 'product'
+            as: 'product',
+            include: [
+              {
+                model: ProductBid,
+                as: 'bids',
+                where: {
+                  status: {
+                    [Op.or]: ['pending', 'completed','accepted']
+                  }
+                },
+                include: [
+                  {
+                    model: User,
+                    as: 'user'
+                  }
+                ],
+                order: [
+                  ['bid_price', 'DESC']
+                ]
+              }
+            ]
           }
-        ],
-        order: [
-          ['bid_price', 'DESC']
         ]
       });
+
+      //sorting by bid price (nested);
+      productBids.forEach(productBid => {
+        if (productBid.product && productBid.product.bids) {
+          productBid.product.bids.sort((a, b) => b.bid_price - a.bid_price);
+        }
+      });
+
+      // return productBids;
 
       interface myHighestBids {
         product: IProduct;
@@ -165,26 +193,36 @@ class ProductBidService extends BaseService<ProductBid> {
 
       let res: myHighestBids[] = [];
 
+
       for (let i of productBids) {
         if (i.product) {
-          let highestBid = await this.findHighestBidByProduct(req, i.product_id);
+          let highestBid = i.product.bids[0];
+          // Remove the bids property from the product
+          const { bids, ...productWithoutBids } = i.product.get({ plain: true });
           let elem: myHighestBids = {
-            product: i.product,
+            product: productWithoutBids,
             bid_price: i.bid_price,
             status: i.status,
             message: i.message,
             currenct_high_bid: highestBid as IProductBid,
-            // current_hight_bidder: i.user
-          }
-          res.push(elem)
+          };
+          res.push(elem);
         }
       }
 
+      return res;
     } catch (error) {
       console.error('Error retrieving ProductBid instances:', error);
       throw new Error('Error retrieving ProductBid instances');
     }
   }
+
+  //  highestBidder = (bids: IProductBid[]) => {
+  //   if (!bids.length) {
+  //     return null;
+  //   }
+  //   return bids[0];
+  // }
 
   async acceptBid(req: Request | null, bid_id: number) {
     const transaction = await sequelize.transaction();

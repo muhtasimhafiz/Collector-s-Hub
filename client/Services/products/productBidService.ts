@@ -1,6 +1,6 @@
 import { IProductBid } from "@/types/product"
 
-export const placeBid = (product_id:number, update:Partial<IProductBid>) => {
+export const placeBid = (product_id: number, update: Partial<IProductBid>) => {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/place-bid/${product_id}`, {
     method: "POST",
     headers: {
@@ -12,10 +12,11 @@ export const placeBid = (product_id:number, update:Partial<IProductBid>) => {
     if (!res.ok) {
       throw new Error("Failed to place bid");
     }
+    return res.json();
   });
 }
 
-export const fetchProductBids = async (where:Partial<IProductBid> = {}) => {
+export const fetchProductBids = async (where: Partial<IProductBid> = {}) => {
   try {
     const queryParams = new URLSearchParams(where as any).toString();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid?${queryParams}`);
@@ -27,7 +28,7 @@ export const fetchProductBids = async (where:Partial<IProductBid> = {}) => {
   }
 }
 
-export const fetchProductBySeller = async (id:number) => {
+export const fetchProductBySeller = async (id: number) => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/seller/${id}`,
       {
@@ -41,6 +42,23 @@ export const fetchProductBySeller = async (id:number) => {
   } catch (error: any) {
     console.error(error);
     return { error: error.message };
+  }
+}
+
+export const fetchPlacedBids = async (id: number) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product-bid/placed-bids/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error("Failed to fetch bids");
   }
 }
 

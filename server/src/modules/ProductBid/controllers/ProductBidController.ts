@@ -98,7 +98,7 @@ export const placeBid = async (req: Request, res: Response) => {
     if (existingProductBid) {
       existingProductBid.bid_price = req.body.bid_price;
       await existingProductBid.save();
-      return res.status(201).json({ existingProductBid });
+      return res.status(201).json(existingProductBid );
     }
     const productBid = await ProductBidService.create(req,
       {
@@ -114,11 +114,21 @@ export const placeBid = async (req: Request, res: Response) => {
   }
 }
 
-export const getHighestBidsByUser = async (req: Request, res: Response) => {
+export const getHighestBidsForSeller = async (req: Request, res: Response) => {
   try {
     const { user_id } = req.params;
     console.log(user_id);
     const highestBids = await ProductBidService.findHighestBidsBySeller(req, Number(user_id));
+    return res.status(200).json(highestBids);
+  } catch (error: any) {
+    return res.status(400).json({ message: error.message });
+  }
+}
+export const getPlacedBids = async (req: Request, res: Response) => {
+  try {
+    const { user_id } = req.params;
+    console.log(user_id);
+    const highestBids = await ProductBidService.findPlacedBids(req, Number(user_id));
     return res.status(200).json(highestBids);
   } catch (error: any) {
     return res.status(400).json({ message: error.message });
