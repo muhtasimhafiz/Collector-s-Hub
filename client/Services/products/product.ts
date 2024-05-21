@@ -61,18 +61,38 @@ export const createProduct = async (product: ProductCreation) => {
   }
 }
 
-export const fetchProducts = async (where:Partial<IProduct> = {}) => {
+export const fetchProducts = async (where: Partial<IProduct> = {}) => {
   try {
-    const queryParams = new URLSearchParams(where as any).toString();
-    const response = await fetch(`${serverURL}product?${queryParams}`);
+    const encodedParams = new URLSearchParams();
+    for (const key in where) {
+      if (where.hasOwnProperty(key)) {
+        const value = (where as any)[key];
+        // Assuming the value is an object with operators and values
+        if (typeof value === 'object' && value !== null) {
+          for (const operator in value) {
+            if (value.hasOwnProperty(operator)) {
+              encodedParams.append(`${key}[${operator}]`, value[operator]);
+            }
+          }
+        } else {
+          encodedParams.append(key, value);
+        }
+      }
+    }
+    const queryParams = encodedParams.toString();
+    const response = await fetch(`${serverURL}/product?${queryParams}`);
     const data = await response.json();
     return data;
   } catch (error: any) {
     console.error(error);
     return { error: error.message };
   }
-}
+};
 
+
+export const fetchProductLandingPage = async  (where:Partial<IProduct> = {}) => {
+
+}
 
 
 export const postReview = async (review: { product_id: string, review: string }) => {
@@ -93,3 +113,22 @@ export const postReview = async (review: { product_id: string, review: string })
   }
 
 }
+
+
+export const buyNow = async (createObject:{product_id:any, bid_id:any, quantity:any}) => {
+  try {
+    const response = await fetch(`${serverURL}/buy-now`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(createObject),
+    });
+
+    return await response.json();
+  } catch (error:any) {
+    console.error(error);
+    console.log(error.message)
+  }
+} 

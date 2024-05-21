@@ -24,11 +24,15 @@ export default function Home() {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const data = await fetchProducts();
-        console.log(data);
-        setProducts(data);
+        const products = await fetchProducts({
+          quantity: { gt: 0 }, 
+        });
+        console.log(products);
+        setProducts(products);
         setLoading(false);
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.log(error.message);
+      }
     };
 
     getProducts();

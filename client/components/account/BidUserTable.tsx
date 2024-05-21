@@ -23,6 +23,39 @@ import Multiloader from "../ui/Multiloader";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { any, set, z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Textarea } from "../ui/textarea";
+import { placeBid } from "@/Services/products/productBidService";
+import { AuthContext } from "@/hooks/auth/AuthProvider";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { buyNow } from "@/Services/products/product";
+import { useRouter } from "next/navigation";
+
 export interface ProductWithHighestBid {
   currenct_high_bid: IProductBid;
   // user:User;
@@ -163,6 +196,8 @@ export default function BidTable({ user }: { user: User }) {
 
 export const TableRow = ({ bid, handleAction }) => {
   const [openBidModal, setOpenBidModal] = useState(false);
+  const [openBuyModal, setOpenBuyModal] = useState(false);
+
   const [thisBid, setThisBid] = useState(bid);
   const { user } = useContext(AuthContext);
 
@@ -178,6 +213,13 @@ export const TableRow = ({ bid, handleAction }) => {
       bid_price: new_high_bid.bid_price,
     });
   };
+
+  const updateAfterBuying = () => {
+    setThisBid({
+      ...thisBid,
+      status: "completed",
+    });
+  }
   return (
     <>
       <Tr key={thisBid.currenct_high_bid.id}>
@@ -197,7 +239,13 @@ export const TableRow = ({ bid, handleAction }) => {
         <Td>
           <>
             {isPending && !isCurrentUserHighestBidder && (
-              <Button size="sm" colorScheme="blue" onClick={()=>{setOpenBidModal(true)}}>
+              <Button
+                size="sm"
+                colorScheme="blue"
+                onClick={() => {
+                  setOpenBidModal(true);
+                }}
+              >
                 Rebid
               </Button>
             )}
@@ -205,59 +253,47 @@ export const TableRow = ({ bid, handleAction }) => {
               <>You are the highest bidder</>
             )}
             {isAccepted && isCurrentUserHighestBidder && (
-              <Button size="sm" colorScheme="green" onClick={''}>
+              <Button
+                size="sm"
+                colorScheme="green"
+                onClick={() => {
+                  setOpenBuyModal(true);
+                }}
+              >
                 Pay
               </Button>
             )}
             {isCompleted && (
-              <>Highest bidder: {thisBid.currenct_high_bid.user.name}</>
+              <>Bid Closed: {thisBid.currenct_high_bid.user.username}</>
             )}
           </>
           {/* Add other action buttons here */}
         </Td>
       </Tr>
-      <BidModalComponent
-        openBidModal={openBidModal}
-        setOpenBidBModal={() => setOpenBidModal(!openBidModal)}
-        product={thisBid.product}
-        // updateThisBid={updateThisBid}
-        updateBidder={updateThisBid}
-        current_high_bid={thisBid.currenct_high_bid}
-      />
+
+      {isPending && !isCurrentUserHighestBidder && (
+        <BidModalComponent
+          openBidModal={openBidModal}
+          setOpenBidBModal={() => setOpenBidModal(!openBidModal)}
+          product={thisBid.product}
+          // updateThisBid={updateThisBid}
+          updateBidder={updateThisBid}
+          current_high_bid={thisBid.currenct_high_bid}
+        />
+      )}
+
+      {isAccepted && isCurrentUserHighestBidder && (
+        <BuyModalComponent
+          openBuyModal={openBuyModal}
+          setOpenBuyModal={() => setOpenBuyModal(!openBuyModal)}
+          product={thisBid.product}
+          product_bid={thisBid.currenct_high_bid}
+          updateAfterBuying={updateAfterBuying}
+        />
+      )}
     </>
   );
 };
-
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { any, set, z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Textarea } from "../ui/textarea";
-import { placeBid } from "@/Services/products/productBidService";
-import { AuthContext } from "@/hooks/auth/AuthProvider";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 
 export const BidModalComponent = ({
   openBidModal,
@@ -300,9 +336,6 @@ export const BidModalComponent = ({
       setLoading(false);
       setOpenBidBModal();
 
-      // if (user) {
-      //   updateBidder(user);
-      // }
       toast.success("Bid placed successfully");
     } catch (error: any) {
       setLoading(false);
@@ -375,6 +408,149 @@ export const BidModalComponent = ({
               </form>
             </Form>
           </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export const BuyModalComponent = ({
+  openBuyModal,
+  setOpenBuyModal,
+  product,
+  product_bid,
+  updateAfterBuying
+}: // current_high_bid,
+{
+  openBuyModal: boolean;
+  setOpenBuyModal: () => void;
+  updateAfterBuying: () => void;
+  product: IProduct;
+  product_bid?: IProductBid | null;
+  // current_high_bid: IProductBid;
+}) => {
+  // console.log(product);
+  const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
+  const router = useRouter();
+  const sellerName =
+    product.seller.firstName && product.seller.lastName
+      ? `${product.seller.firstName} ${product.seller.lastName}`
+      : product.seller.username;
+
+  const price = product_bid?.bid_price ?? product.price;
+
+  const [totalPrice, setTotalPrice] = useState(price);
+  const product_id = product.id;
+  const bid_id = product_bid?.id ?? null;
+
+  const BuyFormSchema = z.object({
+    quantity: !product_bid ?{} : z.coerce
+      .number()
+      .max(product.quantity, {
+        message: "Quantity must be less than the available quantity",
+      })
+      .min(1, {
+        message: "Quantity must be greater than 0",
+      })
+      .default(1),
+    // message: z.string().optional(),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(BuyFormSchema),
+    defaultValues: {
+      quantity: 1,
+
+      // message: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof BuyFormSchema>) => {
+    const create_object = {
+      ...values,
+      product_id,
+      bid_id,
+    };
+
+    console.log(create_object);
+    try {
+      setLoading(true);
+      let response = await buyNow(create_object);
+      response.user = user;
+      setLoading(false);
+      setOpenBuyModal();
+      toast.success("Bid placed successfully");
+      router.refresh();
+      updateAfterBuying();
+    } catch (error: any) {
+
+      setLoading(false);
+      console.error("Failed to Buy", error.message);
+      toast.error("Failed to place bid");
+    }
+  };
+
+  return (
+    <Dialog open={openBuyModal} onOpenChange={setOpenBuyModal}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle> {product.name}</DialogTitle>
+        </DialogHeader>
+        {loading == true ? (
+          <Multiloader run={loading} />
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="p-6">
+                <Image
+                  className="w-full h-64 object-cover object-center mb-4"
+                  src={product.image}
+                  alt={product.name}
+                  width="50"
+                  height="50"
+                  layout="responsive"
+                  objectFit="cover"
+                />
+                <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
+                <p className="text-gray-700 mb-4">Sold by: <Link href={`/account/${product.id}`}> {sellerName} </Link></p>
+                <p className="text-gray-900 text-xl font-semibold mb-4">
+                  ${totalPrice}
+                </p>
+                {!product_bid && (
+
+                <FormField
+                  control={form.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Quantity</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) => {
+                            setTotalPrice(price * parseInt(e.target.value));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> )
+              }
+
+                <p className="text-gray-700 mb-6">{product.description}</p>
+                <Button
+                  type="submit"
+                  className="w-full bg-black-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+                >
+                  Buy Now for ${Number(totalPrice)}
+                </Button>
+              </div>
+            </form>
+          </Form>
+          // {loading && <Multiloader run={loading} />}
         )}
       </DialogContent>
     </Dialog>

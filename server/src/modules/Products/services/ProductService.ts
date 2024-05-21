@@ -6,6 +6,7 @@ import { ProductJoinCategory } from '../models/ProductJoinCategory';
 import { sequelize } from '../../../../config/database';
 import { ProductBid } from '../../ProductBid/models/ProductBid';
 import { User } from '../../Users/models/User';
+import { Op } from 'sequelize';
 
 
 interface Category_id {
@@ -32,13 +33,51 @@ class ProductService {
     }
   }
 
+   parseQueryParams = (query: any) => {
+    const where: any = {};
+    for (const key in query) {
+      if (query.hasOwnProperty(key)) {
+        const value = query[key];
+        if (typeof value === 'object' && value !== null) {
+          where[key] = {};
+          for (const operator in value) {
+            if (value.hasOwnProperty(operator)) {
+              switch (operator) {
+                case 'gt':
+                  where[key][Op.gt] = value[operator];
+                  break;
+                case 'gte':
+                  where[key][Op.gte] = value[operator];
+                  break;
+                case 'lt':
+                  where[key][Op.lt] = value[operator];
+                  break;
+                case 'lte':
+                  where[key][Op.lte] = value[operator];
+                  break;
+                // Add more cases for other operators as needed
+                default:
+                  where[key][Op.eq] = value[operator];
+                  break;
+              }
+            }
+          }
+        } else {
+          where[key] = value;
+        }
+      }
+    }
+    return where;
+  };
+
   async getAllProducts(req:Request): Promise<Product[]> {
     try {
       const query = req.query
-      
+      const where = this.parseQueryParams(query);
+
       const products = await Product.findAll(
         {
-          where: query,
+          where: where,
           include: [
             {
               model: User,

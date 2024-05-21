@@ -158,21 +158,26 @@ class ProductBidService extends BaseService<ProductBid> {
                     [Op.or]: ['pending', 'completed','accepted']
                   }
                 },
+                order: [
+                  ['bid_price', 'DESC']
+                ],
                 include: [
                   {
                     model: User,
                     as: 'user'
                   }
-                ],
-                order: [
-                  ['bid_price', 'DESC']
                 ]
+              },
+              {
+                model: User,
+                as: 'seller'
               }
             ]
           }
         ]
       });
 
+      // return productBids;
       //sorting by bid price (nested);
       productBids.forEach(productBid => {
         if (productBid.product && productBid.product.bids) {

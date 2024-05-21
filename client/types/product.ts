@@ -9,11 +9,13 @@ export interface IProduct {
   bidding?: boolean;
   price: number;
   image:string;
+
   seller?: User;
   bids?: IProductBid[];
   ratings?: number;
-  quantity?: number;
+  quantity: number;
   currency?: string;
+
   deleted: boolean;
   deleted_at?: Date | null;
   deleted_by?: number | null;

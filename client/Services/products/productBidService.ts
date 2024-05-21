@@ -58,6 +58,7 @@ export const fetchPlacedBids = async (id: number) => {
     const data = await response.json();
     return data;
   } catch (error: any) {
+    
     console.error("Failed to fetch bids");
   }
 }

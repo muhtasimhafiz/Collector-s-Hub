@@ -1,15 +1,20 @@
 import { IProduct } from "../Products/interfaces/IProduct";
+import { User } from "../Users/models/User";
 
 export interface IProductBidStatus  {
   accepted: 'accepted';
   pending: 'pending';
   rejected: 'rejected';
+  completed: 'completed';
+  cancelled : 'cancelled';
 };
 
 export const ProductBidStatus: IProductBidStatus = {
   accepted: 'accepted',
   pending: 'pending',
-  rejected: 'rejected'
+  rejected: 'rejected',
+  completed: 'completed',
+  cancelled : 'cancelled'
 };
 
 export interface IProductBid {
