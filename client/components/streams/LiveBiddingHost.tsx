@@ -7,8 +7,7 @@ import { IProduct } from "@/types/product";
 import Image from "next/image";
 import Select, { MultiValue } from "react-select";
 import CustomMultiSelect from "../ui/multi-select";
-import { BiddingItemsComponent } from "./biddingItemsComponent";
-
+import { BiddingItemsHostComponent } from "./BiddingItemsHostComponent";
 interface ProductDropDown {
   value: any;
   label: string;
@@ -23,14 +22,17 @@ const LiveBidding = ({ uuid }: { uuid: string }) => {
   const { user } = useContext(AuthContext);
   const [selectedProducts, setSelectedProducts] = useState<IProduct[]>([]);
   // const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
-
+  const [logs, setLogs] = useState<{ [key: string]: {username:string,log:string } }>({});
   useEffect(() => {
     const fetchUserProducts = async () => {
       console.log(user.id);
       if (!user) return;
       console.log("valid");
       try {
-        const response = await fetchProducts({ seller_id: user.id });
+        const response = await fetchProducts({
+          seller_id: user.id,
+          quantity: { gt: 0 },
+        });
         setProducts(response);
         setProductDropDown(
           response.map((product) => ({
@@ -54,6 +56,10 @@ const LiveBidding = ({ uuid }: { uuid: string }) => {
 
     socket.on("bidRejected", (data) => {
       alert(data.reason);
+    });
+
+    socket.on("log", (log) => {
+      // setLogs((prevLogs) => [...prevLogs, log]);
     });
 
     return () => {
@@ -87,25 +93,19 @@ const LiveBidding = ({ uuid }: { uuid: string }) => {
       {/* selected products for bidding */}
       <div className="flex flex-row width-50 overflow-x-auto">
         {selectedProducts.map((product) => (
-          <BiddingItemsComponent key={product.id} product={product} />
+          <BiddingItemsHostComponent key={product.id} product={product} />
         ))}
       </div>
-      <h2>
-        Current Highest Bid: ${highestBid.amount} by {highestBid.user}
-      </h2>
-      <input
-        type="text"
-        placeholder="Your Name"
-        value={userName}
-        onChange={(e) => setUserName(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Your Bid"
-        value={bidAmount}
-        onChange={(e) => setBidAmount(Number(e.target.value))}
-      />
-      <button onClick={placeBid}>Place Bid</button>
+      <h2>Logs</h2>
+      <div>
+      {Object.entries(logs).map(([key, { username, log }]) => (
+        <div key={key} style={{ marginBottom: '10px' }}>
+          <strong>{key}:</strong>
+          <p><strong>User:</strong> {username}</p>
+          <p><strong>Log:</strong> {log}</p>
+        </div>
+      ))}
+      </div>
     </div>
   );
 };

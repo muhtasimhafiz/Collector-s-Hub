@@ -110,7 +110,9 @@ export const BuyItems = async (req: Request, res: Response) => {
           status: ProductBidStatus.pending
         }
       });
-
+      
+      product.quantity = 0;
+      await product.save();
       await ProductBid.update({
         status: ProductBidStatus.rejected
       }, {

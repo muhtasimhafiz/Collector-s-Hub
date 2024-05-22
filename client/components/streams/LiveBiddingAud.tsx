@@ -63,7 +63,7 @@ const LiveBiddingAud = ({ uuid }: { uuid: string }) => {
     <div className="flex flex-col justify-center items-center max-h-50">
       <h1>Live Bidding</h1>
       <div className="flex flex-row width-50 overflow-x-auto">
-            {/* <h1>Audience</h1> */}
+            <h1>Audience</h1>
         {products.map((product) => (
           <BiddingItemsComponent key={product.id} product={product} />
         ))}
