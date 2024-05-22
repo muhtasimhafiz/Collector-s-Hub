@@ -52,7 +52,8 @@ export default function Component({
   
   // setReviewList(reviews)
   const user = JSON.parse(localStorage.getItem("user") || '{}');
-  form.setValue('user_id', user.id.toString())
+  const user_id = user.id??""
+  form.setValue('user_id', user_id)
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log('submit')
     console.log(values);
