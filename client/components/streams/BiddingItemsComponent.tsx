@@ -62,6 +62,7 @@ export const BiddingItemsComponent = ({
   return (
     <>
       <CardContainer>
+        Republicsf
         <CardBody className="h-50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
           <CardItem
             translateZ="50"
@@ -128,7 +129,7 @@ export const BiddingItemsComponent = ({
 
                   {!product.bidding && product.quantity > 0 && (
                     <button
-                      // onClick={() => setOpenBidModal(true)}
+                      onClick={() => setOpenBuyModal(true)}
                       className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
                     >
                       Buy Now
@@ -150,7 +151,7 @@ export const BiddingItemsComponent = ({
                     </>
                   ) : (
                     <button
-                      // onClick={() => setOpenBidModal(true)}
+                      onClick={() => setOpenBuyModal(true)}
                       className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
                     >
                       {product.highestBidder?.username} won the bid
@@ -201,6 +202,17 @@ export const BiddingItemsComponent = ({
           product={product}
           roomId={roomId}
         />
+      )}
+
+      {( product.auction_status == "accepted") && (
+        <>
+          <BuyModalComponent
+            openBuyModal={openBuyModal}
+            setOpenBuyModal={() => setOpenBuyModal(!openBuyModal)}
+            product={product}
+            roomId={roomId}
+          />
+        </>
       )}
     </>
   );
@@ -318,110 +330,135 @@ export const BidModalComponent = ({
 };
 
 export const BuyModalComponent = ({
-  openBidModal,
-  setOpenBidBModal,
+  openBuyModal,
+  setOpenBuyModal,
   product,
-  roomId,
-}: {
-  openBidModal: boolean;
-  setOpenBidBModal: () => void;
+  roomId
+  
+}: // current_high_bid,
+{
+  openBuyModal: boolean;
+  setOpenBuyModal: () => void;
   product: IProductHostItem;
-  roomId: any;
+  roomId:string
+  // current_high_bid: IProductBid;
 }) => {
+  // console.log(product);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
-  const bidAmountRef = useRef(null);
 
-  const biddingFormSchema = z.object({
-    bid_price: z.coerce.number().min(product.price + 1, {
-      message: "Bid price must be greater than the highest bid",
-    }),
-    message: z.string().optional(),
+  const price = product.price;
+
+  const [totalPrice, setTotalPrice] = useState(price);
+  const product_id = product.id;
+  const bid_id = product.highest_bid_id?? null;
+
+  const BuyFormSchema = z.object({
+    quantity: product.bidding == false?{} : z.coerce
+      .number()
+      .max(product.quantity, {
+        message: "Quantity must be less than the available quantity",
+      })
+      .min(1, {
+        message: "Quantity must be greater than 0",
+      })
+      .default(1),
+    // message: z.string().optional(),
   });
 
   const form = useForm({
-    resolver: zodResolver(biddingFormSchema),
+    resolver: zodResolver(BuyFormSchema),
     defaultValues: {
-      bid_price: product.price + 1,
-      message: "",
+      quantity: 1,
+
+      // message: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof biddingFormSchema>) => {
-    product.price = values.bid_price;
-    product.highestBidder = user;
-    socket.emit("newBid", {
-      roomId: roomId,
-      product: product,
-    });
+  const onSubmit = async (values: z.infer<typeof BuyFormSchema>) => {
+    const create_object = {
+      ...values,
+      roomId,
+      product,
+    };
+
+    console.log(create_object);
+    try {
+      setLoading(true);
+      let response = await socket.emit('buy', create_object);
+      setLoading(false);
+      setOpenBuyModal();
+      toast.success("Bid placed successfully");
+    } catch (error: any) {
+
+      setLoading(false);
+      console.error("Failed to Buy", error.message);
+      toast.error("Failed to place bid");
+    }
   };
 
   return (
-    <Dialog open={openBidModal} onOpenChange={setOpenBidBModal}>
+    <Dialog open={openBuyModal} onOpenChange={setOpenBuyModal}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Place Bid for {product.name}</DialogTitle>
-          <DialogTitle>
-            {/* Highest bidder {current_high_bid.user?.username ?? "N/A"} */}
-          </DialogTitle>
+          <DialogTitle> {product.name}</DialogTitle>
         </DialogHeader>
         {loading == true ? (
           <Multiloader run={loading} />
         ) : (
-          <div>
-            {/* <CardItem translateZ="100" className="w-full mt-2"> */}
-            <Link
-              href={`/product/${product.id}`}
-              // href={`/product/${product.id}`}
-            >
-              <Image
-                src={product.image}
-                height="1000"
-                width="1000"
-                className="h-40 w-full object-contain rounded-xl group-hover/card:shadow-xl"
-                alt="thumbnail"
-              />
-            </Link>
-            {/* </CardItem> */}
-            <DialogDescription>{product.description}</DialogDescription>
-            <div className="p-4 bg-white shadow-md rounded-md max-w-sm mx-auto">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="bid-amount"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Enter your bid amount
-                    </label>
-                    <FormField
-                      control={form.control}
-                      name="bid_price"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Price(USD)</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    ></FormField>
-                  </div>
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      className="w-full px-4 py-2 rounded-md border border-black bg-green-500 text-white text-sm font-medium hover:bg-green-600 hover:shadow-md transition duration-200"
-                    >
-                      Bid
-                    </button>
-                  </div>
-                </form>
-              </Form>
-            </div>
-          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="p-6">
+                <Image
+                  className="w-full h-64 object-cover object-center mb-4"
+                  src={product.image}
+                  alt={product.name}
+                  width="50"
+                  height="50"
+                  layout="responsive"
+                  objectFit="cover"
+                />
+                <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
+                <p className="text-gray-900 text-xl font-semibold mb-4">
+                  ${totalPrice}
+                </p>
+                {!product.bidding && (
+
+                <FormField
+                  control={form.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Quantity</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) => {
+                            setTotalPrice(price * parseInt(e.target.value));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> )
+              }
+
+                <p className="text-gray-700 mb-6">{product.description}</p>
+                <Button
+                  type="submit"
+                  className="w-full bg-black-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+                >
+                  Buy Now for ${Number(totalPrice)}
+                </Button>
+              </div>
+            </form>
+          </Form>
+          // {loading && <Multiloader run={loading} />}
         )}
       </DialogContent>
     </Dialog>
   );
 };
+

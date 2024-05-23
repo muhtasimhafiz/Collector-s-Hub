@@ -1,18 +1,22 @@
 import { Server, Socket } from 'socket.io';
-import { IProductHostItem, auctionStatus } from '../Products/interfaces/IProduct';
+import { IProduct, IProductHostItem, auctionStatus } from '../Products/interfaces/IProduct';
 import LiveStreamService from '../Livestreams/services/LiveStreamService';
 import { authenticateSocket } from '../../middlewares/authMiddleware';
 const rooms = new Map<string, string>(); // Map of roomId to host socket ID
 import { User } from '../Users/models/User';
 import ProductBidService from '../ProductBid/ProductBidService';
 import { ProductBid } from '../ProductBid/models/ProductBid';
+import { Product } from '../Products/models/Product';
+import { ItemsSold } from '../Products/models/ItemsSold';
+import { sequelize } from '../../../config/database';
+import { IProductBid, ProductBidStatus } from '../ProductBid/types';
 
 const biddingItems: { [key: string]: IProductHostItem[] } = {}; // Dictionary to store products for each room
 const biddingItemsHashMap: {
-  [key:string]:{
-    [key:string]:IProductHostItem
+  [key: string]: {
+    [key: string]: IProductHostItem
   }
-}  = {};
+} = {};
 
 interface RoomData {
   roomId: string;
@@ -20,8 +24,8 @@ interface RoomData {
 }
 
 interface Log {
-  user:User;
-  message:string;
+  user: User;
+  message: string;
 }
 
 const roomLogs: { [key: string]: Log[] } = {};
@@ -47,23 +51,23 @@ export const socketHandler = (io: Server) => {
       }
     });
 
-    socket.on('startAuction', (roomId) => {});
-    socket.on('endAuction', (roomId) => {});
+    socket.on('startAuction', (roomId) => { });
+    socket.on('endAuction', (roomId) => { });
 
-    const log = (roomId:string) => {
+    const log = (roomId: string) => {
       io.to(roomId).emit('logs', roomLogs[roomId]);
     }
-    
+
     socket.on('accept-bid', async (data) => {
       console.log(data)
-      const { roomId,  product } = data;    
+      const { roomId, product } = data;
       console.log(product);
       //saving the bid to the database accorind the format
-      if(!product.highestBidder){
+      if (!product.highestBidder) {
         return;
 
       }
-      
+
       product.auction_status = 'accepted';
       try {
         const response = await ProductBid.create({
@@ -74,23 +78,84 @@ export const socketHandler = (io: Server) => {
           // currency: product.currency,
           // item_id: product.item_id,
         });
-        
+
         product.highest_bid_id = response.id;
         console.log(response);
       } catch (error) {
         console.log(error);
-        
+
       }
-      
+
       biddingItemsHashMap[roomId][product.id] = product;
 
-      if(roomLogs[roomId] == null){
+      if (roomLogs[roomId] == null) {
         roomLogs[roomId] = [];
       }
 
-      roomLogs[roomId].push({user:product.highestBidder, message:`Bid of ${product.price} accpeted for ${product.name}`});
+      roomLogs[roomId].push({ user: product.highestBidder, message: `Bid of ${product.price} accpeted for ${product.name}` });
       log(roomId);
-      updateRoom(roomId);      
+      updateRoom(roomId);
+    })
+
+    socket.on('buy', async (data) => {
+      const transaction = await sequelize.transaction();
+      //check data
+      const { roomId, product, quantity } = data;
+     console.log(roomId);
+      if(!rooms.has(roomId)) return;
+      if (!product.highestBidder) {
+        return;
+      }
+      console.log("buying product");
+      try {
+        //updat the other dependant table
+
+        const db_product = await Product.findByPk(product.id);
+        console.log("Product form database");
+        console.log(db_product)
+        if(!db_product) return ;
+        let bid_id :number|null = null;
+        let bid:any;
+        if (product.bidding) {
+          db_product.quantity = 0;
+          bid = await ProductBid.findByPk(product.highest_bid_id);
+          // bidding exists
+          console.log(bid);
+          bid_id = bid?.id??null;
+        } else {
+          db_product.quantity = db_product.quantity??quantity - quantity;
+        }
+
+        const itemSoldEntity = await ItemsSold.create({
+          buyer_id: product.highestBidder.id,
+          product_id: product.id,
+          quantity: quantity,
+          total_price: product.price,
+          product_bid_id:bid_id,
+          // currency: product.currency,
+        })
+
+        if(bid_id){
+          bid.status = ProductBidStatus.completed;
+          await bid.save();
+        }
+        await db_product.save();
+
+      } catch (error) {
+        console.log(error);
+        await transaction.rollback();
+
+      }
+      product.auction_status = 'completed';
+      // product.highestBidder = product.highestBidder;
+      biddingItemsHashMap[roomId][product.id] = product;
+      if (roomLogs[roomId] == null) {
+        roomLogs[roomId] = [];
+      }
+      roomLogs[roomId].push({ user: product.highestBidder, message: `Bid of ${product.price} accpeted for ${product.name}` });
+      log(roomId);
+      updateRoom(roomId);
+
     })
 
     socket.on('add', (data) => {
@@ -101,17 +166,17 @@ export const socketHandler = (io: Server) => {
     });
 
     const handleBiddingItems = (data: RoomData, io: Server) => {
-      const { roomId, products } = data;    
+      const { roomId, products } = data;
       // Update the products for the room
       products.forEach((product) => {
-        if(biddingItemsHashMap[roomId] == null){
+        if (biddingItemsHashMap[roomId] == null) {
           biddingItemsHashMap[roomId] = {};
         }
         biddingItemsHashMap[roomId][product.id] = product;
       })
 
 
-    
+
       // Emit the updated products to the room
       io.to(roomId).emit('bidding-items', products);
     };
@@ -128,31 +193,31 @@ export const socketHandler = (io: Server) => {
       handleGetBiddingItems(roomId, callback);
     });
 
-    const updateRoom = (roomId:any) => {
+    const updateRoom = (roomId: any) => {
       console.log("update room");
-      io.to(roomId).emit('bidding-items', Object.values(biddingItemsHashMap[roomId]??[]));
+      io.to(roomId).emit('bidding-items', Object.values(biddingItemsHashMap[roomId] ?? []));
     }
 
 
     socket.on('newBid', (data) => {
       const { roomId, product } = data;
-      if(!rooms.has(roomId)) {
+      if (!rooms.has(roomId)) {
         console.log(`Host created and joined room: ${roomId}`);
         socket.emit('bidRejected', { reason: 'Room does not exist' });
         return;
       }
 
       console.log(product);
-      const biddedProduct = biddingItemsHashMap[roomId][product.id]??null;
+      const biddedProduct = biddingItemsHashMap[roomId][product.id] ?? null;
       console.log('new bid received for room:', product.name);
-      if(biddedProduct.price < product.price){
+      if (biddedProduct.price < product.price) {
         biddingItemsHashMap[roomId][product.id] = product;
 
-        
-        if(roomLogs[roomId] == null){
+
+        if (roomLogs[roomId] == null) {
           roomLogs[roomId] = [];
         }
-        roomLogs[roomId].push({user:product.highestBidder, message:`Bid of ${product.price} accpeted for ${product.name}`});
+        roomLogs[roomId].push({ user: product.highestBidder, message: `Bid of ${product.price} accpeted for ${product.name}` });
         log(roomId);
         updateRoom(roomId);
         return;
@@ -170,7 +235,7 @@ export const socketHandler = (io: Server) => {
             uuid: roomId,
           }, {
             status: 'offline',
-          
+
           });
           console.log(response);
           biddingItems.roomId = [];

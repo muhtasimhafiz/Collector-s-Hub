@@ -16,7 +16,7 @@ export class ItemsSold extends Model<IItemsSold, ItemsSoldCreationAttributes> im
   public quantity!: number;
   public total_price!: number;
   public buyer_id!: number;
-  public product_bid_id!: number;
+  public product_bid_id?: number;
   
   public deleted!: boolean;
   public deleted_at?: Date | null;

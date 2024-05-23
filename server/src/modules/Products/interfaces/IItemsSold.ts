@@ -8,7 +8,7 @@ export interface IItemsSold {
   quantity: number;
   total_price: number;
   buyer_id: number;
-  product_bid_id: number;
+  product_bid_id?: number|null;
   
   seller?:User;
   buyer?:User;
