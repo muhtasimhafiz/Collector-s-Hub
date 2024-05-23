@@ -1,5 +1,6 @@
 import { IProduct } from "./IProduct";
 import { IProductBid } from "./IProductBid";
+import { User } from "../../Users/models/User";
 
 export interface IItemsSold {
   id: number;

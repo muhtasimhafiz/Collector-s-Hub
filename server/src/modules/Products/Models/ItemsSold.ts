@@ -6,6 +6,7 @@ import { ProductBid } from '../../ProductBid/models/ProductBid';
 import { IItemsSold } from '../interfaces/IItemsSold';
 import { IProduct } from '../interfaces/IProduct';
 import { IProductBid } from '../interfaces/IProductBid';
+import {User as IUser} from '../../Users/models/User';
 
 export type ItemsSoldCreationAttributes = Optional<IItemsSold, 'id' | 'deleted' | 'deleted_at' | 'deleted_by' | 'created_at' | 'created_by' | 'updated_at' | 'updated_by'>;
 
@@ -25,8 +26,8 @@ export class ItemsSold extends Model<IItemsSold, ItemsSoldCreationAttributes> im
   public updated_at?: Date | null;
   public updated_by!: number | null;
 
-  public  seller?: User;
-  public  buyer?: User;
+  public  seller?: IUser;
+  public  buyer?: IUser;
   public  product?: IProduct;
   public  bid?: IProductBid;
 }

@@ -58,6 +58,7 @@ const CustomMultiSelect: React.FC<CustomMultiSelectProps> = ({ options, onSelect
         formatOptionLabel={formatOptionLabel}
         className="w-full"
         onChange={onSelect}
+        // value={}
       />
     </div>
   );

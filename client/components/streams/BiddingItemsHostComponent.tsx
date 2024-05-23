@@ -1,4 +1,4 @@
-import { IProduct } from "@/types/product";
+import { IProduct, IProductHostItem } from "@/types/product";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import {
   HoverCard,
@@ -8,12 +8,23 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Socket } from "socket.io-client";
+import socket from "@/Services/socket";
 
 export const BiddingItemsHostComponent = ({
   product,
+  roomId
 }: {
-  product: IProduct;
+  product: IProductHostItem;
+  roomId: string;
 }) => {
+  console.log("HostItem")
+  console.log(product);
+
+  const acceptBid = (product: IProductHostItem) => {
+    console.log("acceptBid", product);
+    socket.emit('accept-bid', {roomId,product});
+  }
   return (
     <CardContainer>
       <CardBody className="h-50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
@@ -52,25 +63,65 @@ export const BiddingItemsHostComponent = ({
             // target="__blank"
             className="rounded-xl text-xs font-normal dark:text-white"
           >
-            {product.bidding && product.quantity > 0 && (
-              <button
-                // onClick={() => setOpenBidModal(true)}
-                className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
-              >
-                Bidding
-              </button>
+            {!product.auction_status && (
+              <>
+                {product.bidding && product.quantity > 0 ? (
+                  <>
+                    {product.highestBidder && (
+                      <>
+                        <button
+                          onClick={() => acceptBid(product)}
+                          className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+                        >
+                          Accept Bid
+                        </button>
+                      </>
+                    )}
+
+                    {!product.highestBidder && (
+                      <button
+                      // onClick={() => acceptBid()}
+                      className="px-4 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+                    >
+                      Bidding
+                    </button>
+                    )}
+                    
+                  </>
+                ) : (
+                  product.quantity <= 0 && (
+                    <button
+                      // onClick={() => setOpenBidModal(true)}
+                      className="px-4 py-2 rounded-md border border-black bg-red-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+                    >
+                      Sold Out
+                    </button>
+                  )
+                )}
+              </>
             )}
 
-            { product.quantity <= 0 && (
-              <button
-                // onClick={() => setOpenBidModal(true)}
-                className="px-4 py-2 rounded-md border border-black bg-red-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
-              >
-                Sold Out
-              </button>
+            {product.auction_status === "accepted" && (
+              <>
+                <button
+                  // onClick={() => setOpenBidModal(true)}
+                  className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+                >
+                  You have accepted the bid of {product.prices}
+                </button>
+              </>
             )}
 
-
+            {(product.auction_status === "completed" || product.auction_status == 'sold')&&  (
+              <>
+                <button
+                  // onClick={() => setOpenBidModal(true)}
+                  className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+                >
+                  Sold
+                </button>
+              </>
+            )}
           </CardItem>
           <CardItem
             translateZ={20}

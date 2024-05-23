@@ -9,6 +9,7 @@ import productCategoryRoutes from './src/modules/Products/routes/productCategory
 import liveStreamRoutes from './src/modules/Livestreams/livestreamRoutes';  // Adjust path as needed
 import ProductBidRoutes from './src/modules/ProductBid/productBidRoutes';  // Adjust path as needed
 import {socketHandler} from './src/modules/sockets/index';
+import { authenticateSocket } from './src/middlewares/authMiddleware';
 
 import { config } from 'dotenv';
 import path from 'path';
@@ -32,6 +33,7 @@ const io = new Server(server, {
         origin: '*',
     },
 });
+// io.use(authenticateSocket);
 
 app.use(cors());
 const port = process.env.PORT || 4200;
@@ -52,28 +54,6 @@ initializeDatabase().then(() => {
     let highestBid = { amount: 0, user: '' };
 
     socketHandler(io); // Use the socket handler
-
-    // io.on('connection', (socket) => {
-    //     console.log('a user connected');
-
-    //     // Send the current highest bid to the newly connected user
-    //     socket.emit('highestBid', highestBid);
-
-    //     socket.on('newBid', (bid) => {
-    //         console.log('new bid received:', bid);
-
-    //         if (bid.amount > highestBid.amount) {
-    //             highestBid = bid;
-    //             io.emit('highestBid', highestBid);
-    //         } else {
-    //             socket.emit('bidRejected', { reason: 'Bid amount is too low' });
-    //         }
-    //     });
-
-    //     socket.on('disconnect', () => {
-    //         console.log('user disconnected');
-    //     });
-    // });
 
     server.listen(port, () => {
         console.log(`Server running on http://localhost:${port}`);

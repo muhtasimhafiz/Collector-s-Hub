@@ -136,7 +136,6 @@ export const getPlacedBids = async (req: Request, res: Response) => {
 }
 
 export const acceptBid = async (req: Request, res: Response) => {
-  console.log("accept bid");
   try {
     const { id } = req.params;
     const productBid = await ProductBidService.acceptBid(req, Number(id));

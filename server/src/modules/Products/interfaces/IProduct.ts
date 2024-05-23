@@ -1,4 +1,5 @@
 import { IProductBid } from "../../ProductBid/types";
+import { User } from "../../Users/models/User";
 
 export interface IProduct {
   id: number;
@@ -15,6 +16,7 @@ export interface IProduct {
   
   highestBid?: IProductBid;
   bids?: IProductBid[];
+  // seller?: User;
 
   deleted: boolean;
   deleted_at?: Date | null;
@@ -26,14 +28,17 @@ export interface IProduct {
 }
 
 
+
+
 export interface IProductHostItem extends IProduct {
-  seller: {
-    id: number;
-    username: string;
-    email: string;
-    phone: string;
-    address: string;
-    created_at: Date;
-    updated_at: Date;
-  };
+  highestBidder?: User;
+  auction_status?:string
+  highest_bid_id?:number;
 }
+
+export const auctionStatus = {
+  ACCEPTED: 'accepted',
+  COMPLETED: 'completed',
+  SOLD: 'sold',
+  CANCELLED: 'cancelled',
+};

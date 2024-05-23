@@ -131,4 +131,6 @@ export interface IItemsSold {
 
 export interface IProductHostItem extends IProduct {
   highestBidder?: User;
+  auction_status?:string
+  highest_bid_id?:number;
 }

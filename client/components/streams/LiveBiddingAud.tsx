@@ -8,6 +8,7 @@ import Image from "next/image";
 import Select, { MultiValue } from "react-select";
 import CustomMultiSelect from "../ui/multi-select";
 import { BiddingItemsComponent } from "./biddingItemsComponent";
+import toast from "react-hot-toast";
 
 interface ProductDropDown {
   value: any;
@@ -52,6 +53,10 @@ const LiveBiddingAud = ({ uuid }: { uuid: string }) => {
       alert(data.message);
     });
 
+    socket.on("bidRejected", (data) => {
+      toast.error(data.reason);
+    });
+
     return () => {
       socket.off("highestBid");
       socket.off("roomClosed");
@@ -65,7 +70,7 @@ const LiveBiddingAud = ({ uuid }: { uuid: string }) => {
       <div className="flex flex-row width-50 overflow-x-auto">
             <h1>Audience</h1>
         {products.map((product) => (
-          <BiddingItemsComponent key={product.id} product={product} />
+          <BiddingItemsComponent key={product.id} product={product} roomId={uuid} />
         ))}
       </div>
     </div>
