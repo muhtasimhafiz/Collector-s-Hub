@@ -3,7 +3,7 @@ import socket from "@/Services/socket";
 import { fetchProducts } from "@/Services/products/product";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
 import { placeBid } from "@/Services/products/productBidService";
-import { IProduct } from "@/types/product";
+import { IProduct, IProductHostItem } from "@/types/product";
 import Image from "next/image";
 import Select, { MultiValue } from "react-select";
 import CustomMultiSelect from "../ui/multi-select";
@@ -18,10 +18,10 @@ const LiveBiddingAud = ({ uuid }: { uuid: string }) => {
   const [highestBid, setHighestBid] = useState({ amount: 0, user: "" });
   const [bidAmount, setBidAmount] = useState(0);
   const [userName, setUserName] = useState("");
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<IProductHostItem[]>([]);
   const [productDropDown, setProductDropDown] = useState<ProductDropDown[]>([]);
   const { user } = useContext(AuthContext);
-  const [selectedProducts, setSelectedProducts] = useState<IProduct[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<IProductHostItem[]>([]);
   // const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
 
   useEffect(() => {
@@ -39,11 +39,11 @@ const LiveBiddingAud = ({ uuid }: { uuid: string }) => {
     
     // Listen for highestBid event
     socket.on('bidding-items', (products) => {
-      console.log('Updated products with highest bid:', products);
+      console.log('products:', products);
       setProducts(products);
     });
 
-    socket.emit('get-bidding-items', uuid, (products: IProduct[]) => {
+    socket.emit('get-bidding-items', uuid, (products: IProductHostItem[]) => {
       console.log('Current products:', products);
       setProducts(products);
     });

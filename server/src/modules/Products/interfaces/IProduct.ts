@@ -24,3 +24,16 @@ export interface IProduct {
   updated_at?: Date | null;
   updated_by: number | null;
 }
+
+
+export interface IProductHostItem extends IProduct {
+  seller: {
+    id: number;
+    username: string;
+    email: string;
+    phone: string;
+    address: string;
+    created_at: Date;
+    updated_at: Date;
+  };
+}

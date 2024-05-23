@@ -1,16 +1,20 @@
 import { Server, Socket } from 'socket.io';
-import { IProduct } from '../Products/interfaces/IProduct';
+import { IProduct as IProductHostItem } from '../Products/interfaces/IProduct';
 import LiveStreamService from '../Livestreams/services/LiveStreamService';
 
 const rooms = new Map<string, string>(); // Map of roomId to host socket ID
 
 
-const biddingItems: { [key: string]: IProduct[] } = {}; // Dictionary to store products for each room
-
+const biddingItems: { [key: string]: IProductHostItem[] } = {}; // Dictionary to store products for each room
+const biddingItemsHashMap: {
+  [key:string]:{
+    [key:string]:IProductHostItem
+  }
+}  = {};
 
 interface RoomData {
   roomId: string;
-  products: IProduct[];
+  products: IProductHostItem[];
 }
 export const socketHandler = (io: Server) => {
   io.on('connection', (socket: Socket) => {
@@ -48,22 +52,37 @@ export const socketHandler = (io: Server) => {
     const handleBiddingItems = (data: RoomData, io: Server) => {
       const { roomId, products } = data;    
       // Update the products for the room
-      biddingItems[roomId] = products;
+      products.forEach((product) => {
+        if(biddingItemsHashMap[roomId] == null){
+          biddingItemsHashMap[roomId] = {};
+        }
+        biddingItemsHashMap[roomId][product.id] = product;
+      })
     
       // Emit the updated products to the room
       io.to(roomId).emit('bidding-items', products);
     };
 
-    const handleGetBiddingItems = (roomId: string, callback: (products: IProduct[]) => void) => {
+    const handleGetBiddingItems = (roomId: string, callback: (products: IProductHostItem[]) => void) => {
       // Send the current products for the room to the host
-      const products = biddingItems[roomId] || [];
-      callback(products);
+      const products = biddingItemsHashMap[roomId] ?? [];
+      callback(Object.values(products)); // Invoke the callback with the products
     };
 
     socket.on('add-bidding-item', (data: RoomData) => handleBiddingItems(data, io));
 
-    socket.on('get-bidding-items', (roomId: string, callback: (products: IProduct[]) => void) => {
+    socket.on('get-bidding-items', (roomId: string, callback: (products: IProductHostItem[]) => void) => {
       handleGetBiddingItems(roomId, callback);
+    });
+
+    socket.on('newBid', (data) => {
+      const { roomId, product } = data;
+
+      const biddedProduct = biddingItemsHashMap[roomId][product.id]??null;
+      if(biddedProduct.price < product.price){
+        biddingItemsHashMap[roomId][product.id] = product;
+        io.to(roomId).emit('highestBid', product);
+      }
     });
 
 
@@ -90,7 +109,9 @@ export const socketHandler = (io: Server) => {
           });
           console.log(response);
           biddingItems.roomId = [];
+          // biddintItemsHashMap.roomId = [];
           delete biddingItems.roomId
+          delete biddingItemsHashMap.roomId
           rooms.delete(roomId);
           console.log(`Room ${roomId} closed as host disconnected.`);
           break;

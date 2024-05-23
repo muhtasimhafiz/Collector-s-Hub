@@ -1,4 +1,4 @@
-import { IProduct, IProductBid } from "@/types/product";
+import { IProduct, IProductBid, IProductHostItem } from "@/types/product";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import {
   HoverCard,
@@ -41,13 +41,12 @@ import {
 import { AuthContext } from "@/hooks/auth/AuthProvider";
 import { User } from "@/types/user";
 import { Button } from "../ui/button";
+import { Socket } from "socket.io-client";
 
-interface IProductHostItem extends IProduct {
-  highestBidder?: User;
-}
-export const BiddingItemsComponent = ({ product }: { product: IProduct }) => {
+
+export const BiddingItemsComponent = ({ product }: { product: IProductHostItem }) => {
   const [openBidModal, setOpenBidModal] = useState(false);
-
+  // const [product, setProduct] = useState<IProductHostItem>(product);
   return (
     <>
       <CardContainer>
@@ -126,7 +125,9 @@ export const BiddingItemsComponent = ({ product }: { product: IProduct }) => {
       </CardContainer>
       <BidModalComponent
         openBidModal={openBidModal}
-        setOpenBidBModal={() => {setOpenBidModal(!openBidModal)}}
+        setOpenBidBModal={() => {
+          setOpenBidModal(!openBidModal);
+        }}
         product={product}
       />
     </>
@@ -140,43 +141,35 @@ export const BidModalComponent = ({
 }: {
   openBidModal: boolean;
   setOpenBidBModal: () => void;
-  product: IProduct;
+  product: IProductHostItem;
 }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
-
-
   const bidAmountRef = useRef(null);
 
-  const handleBidSubmit = async () => {
-    const bidAmount = bidAmountRef.current.value;
+  const biddingFormSchema = z.object({
+    bid_price: z.coerce.number().min(product.price + 1, {
+      message: "Bid price must be greater than the highest bid",
+    }),
+    message: z.string().optional(),
+  });
 
-    if (!bidAmount || parseFloat(bidAmount) <= 0) {
-      alert('Please enter a valid bid amount');
-      return;
-    }
+  const form = useForm({
+    resolver: zodResolver(biddingFormSchema),
+    defaultValues: {
+      bid_price: product.price + 1,
+      message: "",
+    },
+  });
 
-    try {
-      const response = await fetch('/api/bid', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ bidAmount: parseFloat(bidAmount) }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      alert('Bid submitted successfully!');
-      // Handle success (e.g., update state, notify user, etc.)
-    } catch (error) {
-      console.error('There was a problem with the bid submission:', error);
-      alert('There was an error submitting your bid');
-    }
-  };
+  const onSubmit = async (values: z.infer<typeof biddingFormSchema>) => {
+    product.price = values.bid_price;
+    product.highestBidder = user;
+    Socket.emit("newBid", {
+      roomId: product.id,
+      product:product
+    });
+  }
 
   return (
     <Dialog open={openBidModal} onOpenChange={setOpenBidBModal}>
@@ -207,33 +200,39 @@ export const BidModalComponent = ({
             {/* </CardItem> */}
             <DialogDescription>{product.description}</DialogDescription>
             <div className="p-4 bg-white shadow-md rounded-md max-w-sm mx-auto">
-              <div className="mb-4">
-                <label
-                  htmlFor="bid-amount"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Enter your bid amount
-                </label>
-                <input
-                  type="number"
-                  id="bid-amount"
-                  name="bid-amount"
-                  ref={bidAmountRef}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                  placeholder="0.00"
-                  min="0"
-                  step="0.01"
-                  required
-                />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={handleBidSubmit}
-                  className="w-full px-4 py-2 rounded-md border border-black bg-green-500 text-white text-sm font-medium hover:bg-green-600 hover:shadow-md transition duration-200"
-                >
-                  Bid
-                </button>
-              </div>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="bid-amount"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Enter your bid amount
+                    </label>
+                    <FormField
+                      control={form.control}
+                      name="bid_price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Price(USD)</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    ></FormField>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      className="w-full px-4 py-2 rounded-md border border-black bg-green-500 text-white text-sm font-medium hover:bg-green-600 hover:shadow-md transition duration-200"
+                    >
+                      Bid
+                    </button>
+                  </div>
+                </form>
+              </Form>
             </div>
           </div>
         )}
