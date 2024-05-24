@@ -6,11 +6,12 @@ import { placeBid } from "@/Services/products/productBidService";
 import { IProduct, IProductHostItem } from "@/types/product";
 import Image from "next/image";
 import Select, { MultiValue } from "react-select";
-import CustomMultiSelect from "../ui/multi-select";
+import Custom from "../ui/single-select";
 import { BiddingItemsHostComponent } from "./BiddingItemsHostComponent";
 import { User } from "@/types/user";
 import Link from "next/link";
-interface ProductDropDown {
+
+export interface ProductDropDown {
   value: any;
   label: string;
   thumbnail: string;
@@ -24,10 +25,7 @@ const LiveBidding = ({ uuid }: { uuid: string }) => {
   const [userName, setUserName] = useState("");
   const [products, setProducts] = useState<IProductHostItem[]>([]);
   const [productDropDown, setProductDropDown] = useState<ProductDropDown[]>([]);
-  const { user 
-
-
-  } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   interface Log {
     user:User;

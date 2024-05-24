@@ -39,6 +39,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     console.log('user');
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('token', token);
+    console.log("login ", user);
     setUser(user);
     setIsAuthenticated(true);
   };

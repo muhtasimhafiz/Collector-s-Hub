@@ -10,6 +10,7 @@ import liveStreamRoutes from './src/modules/Livestreams/livestreamRoutes';  // A
 import ProductBidRoutes from './src/modules/ProductBid/productBidRoutes';  // Adjust path as needed
 import {socketHandler} from './src/modules/sockets/index';
 import { authenticateSocket } from './src/middlewares/authMiddleware';
+import VideoRoutes from './src/modules/videos/videoRoutes';  
 
 import { config } from 'dotenv';
 import path from 'path';
@@ -50,6 +51,7 @@ initializeDatabase().then(() => {
     app.use('/api', productCategoryRoutes);
     app.use('/api', liveStreamRoutes);
     app.use('/api', ProductBidRoutes);
+    app.use('/api', VideoRoutes);
 
     let highestBid = { amount: 0, user: '' };
 

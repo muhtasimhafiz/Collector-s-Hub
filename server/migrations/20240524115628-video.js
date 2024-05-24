@@ -1,8 +1,6 @@
 'use strict';
 
-const { UUID } = require('sequelize');
-
-// /** @type {import('sequelize-cli').Migration} */
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
     /**
@@ -11,27 +9,47 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-
-    await queryInterface.createTable('livestreams', {
+    await queryInterface.createTable('videos', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
       },
+      // title: {
+      //   type: Sequelize.STRING,
+      //   allowNull: false
+      // },
+      duration: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      thumbnail: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      video: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      uuid: {
-        type: Sequelize.STRING,
-        allowNull: false
+      views: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
-      status: {
-        type: Sequelize.ENUM('live', 'offline'),
-        allowNull: false,
-        defaultValue: 'offline'
+
+      product_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true
       },
-      
+
+      caption: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+
       deleted: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
@@ -61,7 +79,8 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true
       }
-      
+
+
     });
   },
 
@@ -72,6 +91,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('livestreams');
+    await queryInterface.dropTable('videos');
   }
 };
