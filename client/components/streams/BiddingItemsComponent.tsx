@@ -1,6 +1,6 @@
 "use client"
 import { IProduct, IProductBid, IProductHostItem } from "@/types/product";
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card-landingPage";
 import {
   HoverCard,
   HoverCardContent,
@@ -62,7 +62,6 @@ export const BiddingItemsComponent = ({
   return (
     <>
       <CardContainer>
-        Republicsf
         <CardBody className="h-50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
           <CardItem
             translateZ="50"
@@ -130,7 +129,7 @@ export const BiddingItemsComponent = ({
                   {!product.bidding && product.quantity > 0 && (
                     <button
                       onClick={() => setOpenBuyModal(true)}
-                      className="px-4 py-2 rounded-md border border-black bg-green-400 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+                      className="px-4 py-2 rounded-md border border-black bg-green-800 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
                     >
                       Buy Now
                     </button>
@@ -204,7 +203,7 @@ export const BiddingItemsComponent = ({
         />
       )}
 
-      {( product.auction_status == "accepted") && (
+      {( product.auction_status == "accepted" || product.bidding == false) && (
         <>
           <BuyModalComponent
             openBuyModal={openBuyModal}
@@ -263,7 +262,7 @@ export const BidModalComponent = ({
     <Dialog open={openBidModal} onOpenChange={setOpenBidBModal}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Place Bfafid for {product.name}</DialogTitle>
+          <DialogTitle>Place Bid for {product.name}</DialogTitle>
           <DialogTitle>
             {/* Highest bidder {current_high_bid.user?.username ?? "N/A"} */}
           </DialogTitle>
@@ -354,7 +353,7 @@ export const BuyModalComponent = ({
   const bid_id = product.highest_bid_id?? null;
 
   const BuyFormSchema = z.object({
-    quantity: product.bidding == false?{} : z.coerce
+    quantity: product.bidding == false?z.optional() : z.coerce
       .number()
       .max(product.quantity, {
         message: "Quantity must be less than the available quantity",

@@ -124,10 +124,10 @@ const Page = ({ params }: RoomId) => {
     <div>
       {/* <h1>Room {roomID}</h1> */}
       {/* <div ref={myLiveStreambun} /> */}
-      <div className="flex flex-col sm:flex-row justify-center items-center">
+      <div className="flex flex-col sm:flex-col justify-center items-center">
+        <div className='min-h-100 mb-4' ref={myLiveStream} />
         {role_str === "host" && <LiveBiddingHost uuid={roomID} />}
         {role_str != "host" && <LiveBiddingAud uuid={roomID} />}
-        <div className='min-h-100' ref={myLiveStream} />
       </div>
     </div>
   );
