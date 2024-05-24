@@ -56,7 +56,7 @@ ItemsSold.init({
   },
   product_bid_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   deleted: {
     type: DataTypes.BOOLEAN,

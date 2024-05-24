@@ -28,14 +28,28 @@ const VideoModal: React.FC<VideoModalProps> = ({ videos, initialIndex, onClose }
     };
   }, [currentIndex, videos]);
 
+  const handleNext = () => {
+    if (currentIndex < videos.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setCurrentIndex(0); // Loop back to the first video
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
       <div className="relative w-full h-full flex items-center justify-center">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 bg-white p-2 rounded z-50"
+          className="absolute top-4 right-4 bg-white text-black p-3 rounded-full shadow-lg z-50 hover:bg-gray-300"
         >
-          Close
+          ✕
+        </button>
+        <button
+          onClick={handleNext}
+          className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-black p-3 rounded-full shadow-lg z-50 hover:bg-gray-300"
+        >
+          Next
         </button>
         {videos.map((video, index) => (
           <div

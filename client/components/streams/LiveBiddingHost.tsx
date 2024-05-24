@@ -6,10 +6,11 @@ import { placeBid } from "@/Services/products/productBidService";
 import { IProduct, IProductHostItem } from "@/types/product";
 import Image from "next/image";
 import Select, { MultiValue } from "react-select";
-import Custom from "../ui/single-select";
+// import Custom from "../ui/single-select";
 import { BiddingItemsHostComponent } from "./BiddingItemsHostComponent";
 import { User } from "@/types/user";
 import Link from "next/link";
+import CustomMultiSelect from "../ui/multi-select";
 
 export interface ProductDropDown {
   value: any;

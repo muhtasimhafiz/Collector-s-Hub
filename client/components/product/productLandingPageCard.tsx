@@ -34,7 +34,13 @@ import {
 } from "@/components/ui/form";
 import React, { useContext, useEffect, useState } from "react";
 
-const ProductLandingPageCard = ({ product, updateAfterBuying }: { product: IProduct,updateAfterBuying:()=>void }) => {
+const ProductLandingPageCard = ({
+  product,
+  updateAfterBuying,
+}: {
+  product: IProduct;
+  updateAfterBuying: () => void;
+}) => {
   const [openBidModal, setOpenBidModal] = useState(false);
   const [highestBidder, setHighestBidder] = useState<User | null>(null);
   const { user } = useContext(AuthContext);
@@ -42,7 +48,7 @@ const ProductLandingPageCard = ({ product, updateAfterBuying }: { product: IProd
   const [bidding, setBidding] = useState(false);
   const [openBuyModal, setOpenBuyModal] = useState(false);
   const [product_bid, setProductBid] = useState<IProductBid | null>(null);
-console.log(highestBid);
+  console.log(highestBid);
   useEffect(() => {
     if (product.bidding && product.bids && product.bids.length > 0) {
       const bidder = product.bids?.reduce((prev, current) => {
@@ -161,23 +167,31 @@ console.log(highestBid);
           </HoverCard>
         </CardItem>
       </div>
-      {highestBidder && user && product.bidding && highestBidder?.id != user?.id && (
-      <BidModalComponent
-        openBidModal={openBidModal}
-        setOpenBidBModal={() => setOpenBidModal(!openBidModal)}
-        product={product}
-        updateBidder={updateBidder}
-        highestBidder={highestBidder}
-      />)}
-      {user && (product.bidding == false || product_bid?.status == 'accepted' && highestBidder && highestBidder.id == user.id) && (
-        <BuyModalComponent 
-        openBuyModal={openBuyModal}
-        setOpenBuyModal={() => setOpenBuyModal(!openBuyModal)}
-        product={product}
-        product_bid={product_bid}
-        updateAfterBuying={updateAfterBuying}
-        />
-      )}
+      {highestBidder &&
+        user &&
+        product.bidding &&
+        highestBidder?.id != user?.id && (
+          <BidModalComponent
+            openBidModal={openBidModal}
+            setOpenBidBModal={() => setOpenBidModal(!openBidModal)}
+            product={product}
+            updateBidder={updateBidder}
+            highestBidder={highestBidder}
+          />
+        )}
+      {user &&
+        (product.bidding == false ||
+          (product_bid?.status == "accepted" &&
+            highestBidder &&
+            highestBidder.id == user.id)) && (
+          <BuyModalComponent
+            openBuyModal={openBuyModal}
+            setOpenBuyModal={() => setOpenBuyModal(!openBuyModal)}
+            product={product}
+            product_bid={product_bid}
+            updateAfterBuying={updateAfterBuying}
+          />
+        )}
     </CardBody>
   );
 };
@@ -354,7 +368,7 @@ export const BuyModalComponent = ({
   setOpenBuyModal,
   product,
   product_bid,
-  updateAfterBuying
+  updateAfterBuying,
 }: // current_high_bid,
 {
   openBuyModal: boolean;
@@ -381,15 +395,17 @@ export const BuyModalComponent = ({
   const bid_id = product_bid?.id ?? null;
 
   const BuyFormSchema = z.object({
-    quantity: !product_bid ?{} : z.coerce
-      .number()
-      .max(product.quantity, {
-        message: "Quantity must be less than the available quantity",
-      })
-      .min(1, {
-        message: "Quantity must be greater than 0",
-      })
-      .default(1),
+    quantity: product_bid
+      ? z
+          .number()
+          .max(product.quantity, {
+            message: "Quantity must be less than the available quantity",
+          })
+          .min(1, {
+            message: "Quantity must be greater than 0",
+          })
+          .default(1)
+      : z.number().optional(), // Or set to null or a default value if required
     // message: z.string().optional(),
   });
 
@@ -409,11 +425,10 @@ export const BuyModalComponent = ({
       bid_id,
     };
 
-    console.log(create_object);
-    return;
     try {
       setLoading(true);
       let response = await buyNow(create_object);
+      console.log(response);
       response.user = user;
       setLoading(false);
       setOpenBuyModal();
@@ -421,7 +436,6 @@ export const BuyModalComponent = ({
       // router.refresh();
       updateAfterBuying();
     } catch (error: any) {
-
       setLoading(false);
       console.error("Failed to Buy", error.message);
       toast.error("Failed to place bid");
@@ -450,33 +464,35 @@ export const BuyModalComponent = ({
                   objectFit="cover"
                 />
                 <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-                <p className="text-gray-700 mb-4">Sold by: <Link href={`/account/${product.id}`}> {sellerName} </Link></p>
+                <p className="text-gray-700 mb-4">
+                  Sold by:{" "}
+                  <Link href={`/account/${product.id}`}> {sellerName} </Link>
+                </p>
                 <p className="text-gray-900 text-xl font-semibold mb-4">
                   ${totalPrice}
                 </p>
                 {!product_bid && (
-
-                <FormField
-                  control={form.control}
-                  name="quantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Quantity ({quantity})</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) => {
-                            setQuantity(parseInt(e.target.value));
-                            setTotalPrice(price * parseInt(e.target.value));
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> )
-              }
+                  <FormField
+                    control={form.control}
+                    name="quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quantity ({quantity})</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={(e) => {
+                              setQuantity(parseInt(e.target.value));
+                              setTotalPrice(price * parseInt(e.target.value));
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <p className="text-gray-700 mb-6">{product.description}</p>
                 <Button

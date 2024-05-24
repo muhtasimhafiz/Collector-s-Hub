@@ -32,7 +32,6 @@ const VideoComponent = ({user_id=null}:{user_id:number|null}) => {
   }, [])
   return (
     <div>
-        Videos
         <ReelsPage videoDataObj={videos} />
     </div>
   )
