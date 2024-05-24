@@ -1,5 +1,9 @@
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
-import { IProduct } from "@/types/product";
+import {
+  CardBody,
+  CardContainer,
+  CardItem,
+} from "@/components/ui/3d-card-landingPage";
+import { IProduct, IProductBid } from "@/types/product";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -30,13 +34,15 @@ import {
 } from "@/components/ui/form";
 import React, { useContext, useEffect, useState } from "react";
 
-const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
+const ProductLandingPageCard = ({ product, updateAfterBuying }: { product: IProduct,updateAfterBuying:()=>void }) => {
   const [openBidModal, setOpenBidModal] = useState(false);
   const [highestBidder, setHighestBidder] = useState<User | null>(null);
   const { user } = useContext(AuthContext);
   const [highestBid, setHighestBid] = useState(0);
   const [bidding, setBidding] = useState(false);
-
+  const [openBuyModal, setOpenBuyModal] = useState(false);
+  const [product_bid, setProductBid] = useState<IProductBid | null>(null);
+console.log(highestBid);
   useEffect(() => {
     if (product.bidding && product.bids && product.bids.length > 0) {
       const bidder = product.bids?.reduce((prev, current) => {
@@ -44,9 +50,10 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
       });
       if (bidder.user) {
         setHighestBidder(bidder.user);
-        setHighestBid(bidder.bid_price); 
+        setHighestBid(bidder.bid_price);
+        setProductBid(bidder);
       } else {
-        setHighestBid(product.price); 
+        setHighestBid(product.price);
       }
     } else {
       setHighestBid(product.price);
@@ -57,7 +64,7 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
     setHighestBidder(bidder);
   };
   return (
-    <CardBody className="h-50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
+    <CardBody className="h-25 sm:30 sm:20 sm:50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1]  sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
       <CardItem
         translateZ="50"
         className="text font-bold text-neutral-600 dark:text-white"
@@ -71,7 +78,7 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
   >
     Hover over this card to unleash the power of CSS perspective
   </CardItem> */}
-      <CardItem translateZ="100" className="w-full mt-2">
+      <CardItem translateZ="100" className="w-50 mt-2">
         <Link
           href={`/product/${product.id}`}
           // href={`/product/${product.id}`}
@@ -106,37 +113,12 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
             ))}
 
           {product.bidding == false && (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Button variant="link">Buy Now</Button>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-64">
-                <div className="flex justify-between space-x-4">
-                  <Avatar>
-                    <AvatarImage
-                      src={
-                        product.seller?.image ?? "https://github.com/vercel.png"
-                      }
-                    />
-                    <AvatarFallback>VC</AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">
-                      <Link href={`/account/${product.seller_id}`}>
-                        @{product.seller?.username}
-                      </Link>
-                    </h4>
-                    <p className="text-sm">{product.description ?? "N/a"}</p>
-                    <div className="flex items-center pt-2">
-                      <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-                      <span className="text-xs text-muted-foreground">
-                        Listed December 2021
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
+            <button
+              onClick={() => setOpenBuyModal(true)}
+              className="px-4 py-2 rounded-md border border-black bg-emerald-600 text-white text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+            >
+              Buy
+            </button>
           )}
         </CardItem>
         <CardItem
@@ -144,16 +126,58 @@ const ProductLandingPageCard = ({ product }: { product: IProduct }) => {
           as="button"
           className="px-2 py-1 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
         >
-          $ {Math.round(highestBid)}
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button variant="link" className="text-white">
+                $ {Math.round(highestBid)}
+              </Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-64">
+              <div className="flex justify-between space-x-4">
+                <Avatar>
+                  <AvatarImage
+                    src={
+                      product.seller?.image ?? "https://github.com/vercel.png"
+                    }
+                  />
+                  <AvatarFallback>VC</AvatarFallback>
+                </Avatar>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold">
+                    <Link href={`/account/${product.seller_id}`}>
+                      @{product.seller?.username}
+                    </Link>
+                  </h4>
+                  <p className="text-sm">{product.description ?? "N/a"}</p>
+                  <div className="flex items-center pt-2">
+                    <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+                    <span className="text-xs text-muted-foreground">
+                      Listed on {product.createdAt ?? ""}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </CardItem>
       </div>
+      {highestBidder && user && product.bidding && highestBidder?.id != user?.id && (
       <BidModalComponent
         openBidModal={openBidModal}
         setOpenBidBModal={() => setOpenBidModal(!openBidModal)}
         product={product}
         updateBidder={updateBidder}
         highestBidder={highestBidder}
-      />
+      />)}
+      {user && (product.bidding == false || product_bid?.status == 'accepted' && highestBidder && highestBidder.id == user.id) && (
+        <BuyModalComponent 
+        openBuyModal={openBuyModal}
+        setOpenBuyModal={() => setOpenBuyModal(!openBuyModal)}
+        product={product}
+        product_bid={product_bid}
+        updateAfterBuying={updateAfterBuying}
+        />
+      )}
     </CardBody>
   );
 };
@@ -166,9 +190,10 @@ import { useForm } from "react-hook-form";
 import Multiloader from "../ui/Multiloader";
 import toast from "react-hot-toast";
 import { Textarea } from "../ui/textarea";
-import { placeBid } from "@/Services/products/productBidService";
+import { acceptBid, placeBid } from "@/Services/products/productBidService";
 import { User } from "@/types/user";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
+import { buyNow } from "@/Services/products/product";
 // import {
 //   Form,
 //   FormControl,
@@ -231,7 +256,7 @@ export const BidModalComponent = ({
       } else {
         setHighestBid(product.price);
       }
-    }else {
+    } else {
       setHighestBid(product.price);
     }
   }, []);
@@ -318,6 +343,152 @@ export const BidModalComponent = ({
               </form>
             </Form>
           </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export const BuyModalComponent = ({
+  openBuyModal,
+  setOpenBuyModal,
+  product,
+  product_bid,
+  updateAfterBuying
+}: // current_high_bid,
+{
+  openBuyModal: boolean;
+  setOpenBuyModal: () => void;
+  updateAfterBuying: () => void;
+  product: IProduct;
+  product_bid?: IProductBid | null;
+  // current_high_bid: IProductBid;
+}) => {
+  // console.log(product);
+  const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
+  // const router = useRouter();
+  const [quantity, setQuantity] = useState(product.quantity);
+  const sellerName =
+    product.seller.firstName && product.seller.lastName
+      ? `${product.seller.firstName} ${product.seller.lastName}`
+      : product.seller.username;
+
+  const price = product_bid?.bid_price ?? product.price;
+
+  const [totalPrice, setTotalPrice] = useState(price);
+  const product_id = product.id;
+  const bid_id = product_bid?.id ?? null;
+
+  const BuyFormSchema = z.object({
+    quantity: !product_bid ?{} : z.coerce
+      .number()
+      .max(product.quantity, {
+        message: "Quantity must be less than the available quantity",
+      })
+      .min(1, {
+        message: "Quantity must be greater than 0",
+      })
+      .default(1),
+    // message: z.string().optional(),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(BuyFormSchema),
+    defaultValues: {
+      quantity: 1,
+
+      // message: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof BuyFormSchema>) => {
+    const create_object = {
+      ...values,
+      product_id,
+      bid_id,
+    };
+
+    console.log(create_object);
+    return;
+    try {
+      setLoading(true);
+      let response = await buyNow(create_object);
+      response.user = user;
+      setLoading(false);
+      setOpenBuyModal();
+      toast.success("Bid placed successfully");
+      // router.refresh();
+      updateAfterBuying();
+    } catch (error: any) {
+
+      setLoading(false);
+      console.error("Failed to Buy", error.message);
+      toast.error("Failed to place bid");
+    }
+  };
+
+  return (
+    <Dialog open={openBuyModal} onOpenChange={setOpenBuyModal}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle> {product.name}</DialogTitle>
+        </DialogHeader>
+        {loading == true ? (
+          <Multiloader run={loading} />
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="p-6">
+                <Image
+                  className="w-full h-64 object-cover object-center mb-4"
+                  src={product.image}
+                  alt={product.name}
+                  width="50"
+                  height="50"
+                  layout="responsive"
+                  objectFit="cover"
+                />
+                <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
+                <p className="text-gray-700 mb-4">Sold by: <Link href={`/account/${product.id}`}> {sellerName} </Link></p>
+                <p className="text-gray-900 text-xl font-semibold mb-4">
+                  ${totalPrice}
+                </p>
+                {!product_bid && (
+
+                <FormField
+                  control={form.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Quantity ({quantity})</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) => {
+                            setQuantity(parseInt(e.target.value));
+                            setTotalPrice(price * parseInt(e.target.value));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> )
+              }
+
+                <p className="text-gray-700 mb-6">{product.description}</p>
+                <Button
+                  type="submit"
+                  className="w-full bg-black-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+                >
+                  Buy Now for ${Number(totalPrice)}
+                </Button>
+              </div>
+            </form>
+          </Form>
+          // {loading && <Multiloader run={loading} />}
         )}
       </DialogContent>
     </Dialog>

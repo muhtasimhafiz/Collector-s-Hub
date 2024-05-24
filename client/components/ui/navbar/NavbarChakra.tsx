@@ -20,8 +20,8 @@ const NavBar = () => {
   };
 
   return (
-    <div className="w-full sm:bottom-auto top-0 fixed">
-    <nav className="bg-white shadow-md border-2 text-black p-3 flex justify-between items-center rounded-full mx-10">
+<div className="fixed top-0 left-0 w-full bg-white z-50 shadow">
+      <nav className="bg-white shadow-md border-2 text-black p-3 flex justify-between items-center rounded-full mx-10">
         <div className="flex items-center">
           {/* Icon on the left */}
           {/* <Icon
@@ -29,11 +29,7 @@ const NavBar = () => {
             className="w-6 h-6 mx-3 text-gray-600"
             aria-label="Menu"
           /> */}
-          <Link
-            href={
-              "/"
-            }
-          >Home</Link>
+          <Link href={"/"}>Home</Link>
         </div>
 
         <div className="flex gap-4 items-center">

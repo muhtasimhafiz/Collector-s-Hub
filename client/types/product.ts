@@ -23,6 +23,8 @@ export interface IProduct {
   created_by: number | null;
   updated_at?: Date | null;
   updated_by: number | null;
+
+  createdAt?: String;
 }
 
 export interface IProductBid {

@@ -36,6 +36,7 @@ export default function BidTable({ user }: { user: User }) {
     const fetchData = async () => {
       const data = await fetchProductBySeller(user.id);
       if (data.error) {
+        console.log(data.error);
         // toast({
         //   title: "Failed to fetch bids.",
         //   status: "error",
@@ -43,7 +44,7 @@ export default function BidTable({ user }: { user: User }) {
         //   isClosable: true,
         // });
 
-        toast.warning("Failed to fetch bids.");
+        toast.error("Failed to fetch bids.");
         return;
       }
       setBids(data);
