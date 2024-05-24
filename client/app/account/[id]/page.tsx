@@ -37,6 +37,7 @@ import BidTable from "@/components/account/BidSellerTable";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
 import BidUserTable from "@/components/account/BidUserTable";
 import TransactionTable from "@/components/account/TransactionTable";
+import VideoComponent from "@/components/video/VideoComponent";
 
 interface AccountDetailProps {
   params: { id: string };
@@ -116,6 +117,17 @@ export default function Page({ params }: AccountDetailProps) {
         <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
           <p>Product Tab</p>
           <DummyContent products={products} />
+        </div>
+      ),
+    },
+
+    {
+      title: "Videos",
+      value: "videos",
+      content: (
+        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
+          <p>Video</p>
+        <UsersVideos user={account} />
         </div>
       ),
     },
@@ -333,6 +345,16 @@ const Transactions = ({ user }: { user: User }) => {
       // style={{ maxHeight: "200px" }}
     >
       <TransactionTable user={user} />
+    </div>
+  );
+}
+const UsersVideos = ({ user }: { user: User }) => {
+  return (
+    <div
+      className="border-2 shadow bg-grey-600 min-h-full w-full rounded-2xl p-4 m-0 min-w-full flex flex-row flex-wrap overflow-y-scroll justify-around"
+      // style={{ maxHeight: "200px" }}
+    >
+      <VideoComponent user_id={Number(user.id)} />
     </div>
   );
 }

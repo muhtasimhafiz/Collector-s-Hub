@@ -8,6 +8,7 @@
     "next-cloudinary": "^6.5.2",
     "pg": "^8.11.5",
     "pg-hstore": "^2.3.4",
+    "react-player": "^2.16.0",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
     "stream-chat": "^8.33.0",
