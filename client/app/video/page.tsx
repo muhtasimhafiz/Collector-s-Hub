@@ -229,73 +229,120 @@ const ReelRecorder: React.FC = () => {
           mediaRecorderRef.current = mediaRecorder;
 
           return (
-            <div>
-              <button
-                onClick={() => handleStartRecording(startRecording)}
-                disabled={status === "recording"}
-              >
-                Start Recording
-              </button>
-              <button onClick={stopRecording} disabled={status !== "recording"}>
-                Stop Recording
-              </button>
-              {status === "recording" && previewStream && (
-                <div>
-                  <video
-                    ref={(video) => {
-                      if (video) {
-                        video.srcObject = previewStream;
-                      }
-                    }}
-                    autoPlay
-                    muted
-                  />
-                </div>
-              )}
-              <div className="flex flex-col justify-center place-items-center">
-                {imageUrl && (
-                  <div className="w-full mb-3 sm:w-[450px] h-[200px] sm:h-[450px]">
-                    {/* <AspectRatio ratio={16 / 9}> */}
-                    <Image
-                      width={1600}
-                      height={900}
-                      src={imageUrl}
-                      alt="Image"
-                      className="rounded-md object-contain h-full w-full" // Ensures the image fits within the div without stretching
-                    />
-                    {/* </AspectRatio> */}
+            <div className="max-h-full bg-gray-100 p-4 flex flex-col items-center">
+            <ReactMediaRecorder
+              video
+              onStop={handleStop}
+              onStart={(stream) => setStream(stream)}
+              render={({
+                startRecording,
+                stopRecording,
+                mediaBlobUrl,
+                status,
+                mediaRecorder,
+                previewStream,
+              }) => {
+                mediaRecorderRef.current = mediaRecorder;
+      
+                return (
+                  <div className="w-full max-w-2xl flex flex-col justify-center items-center bg-white shadow-md rounded-lg p-6 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <button
+                        onClick={() => handleStartRecording(startRecording)}
+                        disabled={status === "recording"}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:bg-blue-300 mx-2"
+                      >
+                        Start Recording
+                      </button>
+                      <button
+                        onClick={stopRecording}
+                        disabled={status !== "recording"}
+                        className="bg-red-500 text-white px-4 py-2 rounded-md disabled:bg-red-300 mx-2"
+                      >
+                        Stop Recording
+                      </button>
+                    </div>
+                    {status === "recording" && previewStream && (
+                      <div className="w-full bg-black rounded-md overflow-hidden">
+                        <video
+                          ref={(video) => {
+                            if (video) {
+                              video.srcObject = previewStream;
+                            }
+                          }}
+                          autoPlay
+                          muted
+                          className="w-full"
+                        />
+                      </div>
+                    )}
+                    <div className="flex flex-col items-center space-y-4">
+                      {imageUrl && (
+                        <div className="w-full mb-3 sm:w-[450px] h-[200px] sm:h-[450px]">
+                          <Image
+                            width={600}
+                            height={600}
+                            src={imageUrl}
+                            alt="Image"
+                            className="rounded-md object-contain h-full w-full"
+                          />
+                        </div>
+                      )}
+                      <h1 className="text-xl font-semibold">Image</h1>
+                      <input
+                        type="file"
+                        ref={image}
+                        onChange={handleImageChange}
+                        className="border p-2 rounded-md"
+                      />
+                      <h1 className="text-xl font-semibold">Upload Video Caption</h1>
+                      <input
+                        type="text"
+                        ref={caption}
+                        className="border p-2 rounded-md w-full"
+                      />
+                      <CustomMultiSelect
+                        options={productDropDown}
+                        onSelect={handleSelect}
+                        multi={false}
+                      />
+                      {/* {selectedOption && (
+                        <div className="w-full">
+                          <VideoProductCardComponent product={selectedOption} />
+                        </div>
+                      )} */}
+                    </div>
+                    <button
+                      onClick={handleUpload}
+                      className="w-full bg-green-500 text-white px-4 py-2 rounded-md"
+                    >
+                      {uploading ? "Uploading..." : "Upload"}
+                    </button>
+                    {previewUrl && (
+                      <div className="w-full bg-black rounded-md overflow-hidden mt-4">
+                        <video src={previewUrl} controls autoPlay loop className="w-full" />
+                        <div className="flex justify-between mt-2">
+                          <button
+                            onClick={handleUpload}
+                            disabled={uploading}
+                            className="bg-green-500 text-white px-4 py-2 rounded-md"
+                          >
+                            {uploading ? "Uploading..." : "Upload"}
+                          </button>
+                          <button
+                            onClick={() => setPreviewUrl(null)}
+                            className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                          >
+                            Discard
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-                <h1>Image</h1>
-                <input type="file" ref={image} onChange={handleImageChange} />
-                <h1>Upload Video Caption</h1>
-                <input type="text" ref={caption} />
-                <CustomMultiSelect
-                  options={productDropDown}
-                  onSelect={handleSelect}
-                  multi={false}
-                />
-                <div>
-                  {selectedOption && (
-                    <VideoProductCardComponent product={selectedOption} />
-                  )}
-                </div>
-              </div>
-
-              <button onClick={handleUpload}>
-                {/* {uploading ? "Uploading..." : "Upload"} */}
-                upload test
-              </button>
-              {previewUrl && (
-                <div>
-                  <video src={previewUrl} controls autoPlay loop />
-                  <button onClick={handleUpload} disabled={uploading}>
-                    {uploading ? "Uploading..." : "Upload"}
-                  </button>
-                  <button onClick={() => setPreviewUrl(null)}>Discard</button>
-                </div>
-              )}
-            </div>
+                );
+              }}
+            />
+          </div>
           );
         }}
       />

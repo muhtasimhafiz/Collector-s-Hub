@@ -40,7 +40,7 @@ export default function RootLayout({
         <Provider>
           {/* <Navbar/> */}
           <NavBar />
-          <div className="min-h-full flex-col items-center justify-center align-center">
+          <div className="pt-20 min-h-full flex-col items-center justify-center align-center">
             {children}
           </div>
           <Toaster />

@@ -497,7 +497,7 @@ export const BuyModalComponent = ({
                 <p className="text-gray-700 mb-6">{product.description}</p>
                 <Button
                   type="submit"
-                  className="w-full bg-black-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+                  className="w-full bg-black-600 text-white bg-black font-bold py-2 px-4 rounded hover:bg-blue-600"
                 >
                   Buy Now for ${Number(totalPrice)}
                 </Button>

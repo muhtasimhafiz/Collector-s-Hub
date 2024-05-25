@@ -21,11 +21,21 @@ import ProductLandingPageCard from "@/components/product/productLandingPageCard"
 import Stream from "@/components/streams/page";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { FlipWords } from "@/components/ui/flip-words";
+import { fetchUsers } from "@/Services/userService";
+import { set } from "zod";
+import UserCard from "@/components/ui/UserCard";
+import { User } from "@/types/user";
+import { AwardIcon } from "lucide-react";
+import { fetchVideos } from "@/Services/videoService";
+import { IVideo } from "@/types/video";
+import VideoComponent from "@/components/video/VideoComponent";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [accounts, setAccounts] = useState<User[]>([]);
+  const [reels, setReels] = useState<IVideo[]>([]);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -33,6 +43,12 @@ export default function Home() {
         const products = await fetchProducts({
           quantity: { gt: 0 },
         });
+
+        const account = await fetchUsers();
+        const reels = await fetchVideos();
+        setReels(reels);
+        console.log(account);
+        setAccounts(account);
         console.log(products);
         setProducts(products);
         setLoading(false);
@@ -55,7 +71,7 @@ export default function Home() {
     } catch (error: any) {
       console.log(error.message);
     }
-  }
+  };
   const words = ["Creativity", "Posession", "Memories", "Nostalgia"];
 
   return (
@@ -82,6 +98,39 @@ export default function Home() {
           <div className="flex justify-center">
             <Stream />
           </div>
+
+          {/* user account */}
+
+          <div className="w-full">
+            <h2 className="font-bold text-lg mb-2">Accounts</h2>
+            <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
+              {accounts.length > 0 &&
+                accounts.map((account) => (
+                  <Link
+                    href={`/account/${account.id}`}
+                    key={account.id}
+                    prefetch={false}
+                  >
+                    <UserCard
+                      key={account.id}
+                      imageUrl={account.image ?? null}
+                      name={account.username}
+                    />
+                  </Link>
+                ))}
+            </div>
+          </div>
+
+          {/* Video Reels */}
+          {reels.length > 0 && (
+          <div className="w-full">
+            <h2 className="font-bold text-lg mb-2">Product Reels</h2>
+            <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
+              <VideoComponent user_id={null} />
+            </div>
+
+          </div>
+          )}
           {/* Product Listing page */}
           <div className="w-full">
             <h2 className="font-bold text-lg mb-2">Products</h2>
@@ -92,7 +141,10 @@ export default function Home() {
                     className="py-0 w-10 inter-var h-50 min-w-[15rem]"
                     key={product.id}
                   >
-                    <ProductLandingPageCard product={product} updateAfterBuying={updateProducts}/>
+                    <ProductLandingPageCard
+                      product={product}
+                      updateAfterBuying={updateProducts}
+                    />
                   </CardContainer>
                 ))}
             </div>

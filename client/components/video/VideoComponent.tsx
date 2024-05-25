@@ -9,6 +9,7 @@ import ReelsPage from './Reels'
 
 const VideoComponent = ({user_id=null}:{user_id:number|null}) => {
   const [videos, setVideos] = useState<IVideo[]>([])
+  const [openVideoUploadModal, setOpenVideoUploadModal] = useState(false)
   useEffect(() => {
     console.log('VideoComponent')
     const fetchData = async () => {
@@ -37,4 +38,8 @@ const VideoComponent = ({user_id=null}:{user_id:number|null}) => {
   )
 }
 
-export default VideoComponent
+export default VideoComponent;
+
+
+
+

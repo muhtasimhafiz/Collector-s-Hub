@@ -52,7 +52,7 @@ export const createUser = async (userData:Partial<User>): Promise<User> => {
 export const getUserById = async (id: number): Promise<User | null> => {
     try {
         const user = await User.findByPk(id, {  
-            include: [{ model: Product, as: 'products' }]
+            include: [{ model: Product, as: 'products', required:false }]
           });
         return user;
     } catch (error) {

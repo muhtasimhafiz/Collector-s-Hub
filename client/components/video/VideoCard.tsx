@@ -13,9 +13,9 @@ interface VideoCardProps {
 const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
   return (
     <div className="video-card" onClick={() => onClick(video)}>
-      <Image src={video.thumbnail} alt="thumbnail" className="w-full h-auto" 
-      width={300}
-      height={200}
+      <Image src={video.thumbnail} alt="thumbnail" className="rounded-lg" 
+      width={100}
+      height={100}
       />
     </div>
   );

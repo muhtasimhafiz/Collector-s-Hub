@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { createUserHandler, getuserDetails, loginUserHandler, registrationHandle, updateUserDetails } from '../controllers/UserController';
+import { createUserHandler, findAllUsers, getuserDetails, loginUserHandler, registrationHandle, updateUserDetails } from '../controllers/UserController';
 import { authenticateToken } from '../../../middlewares/authMiddleware';
 import { body } from 'express-validator';
 
@@ -10,7 +10,7 @@ router.post('/user', createUserHandler);
 router.post('/login', loginUserHandler);
 router.get('/user/:id', getuserDetails )
 router.put('/user/:id', updateUserDetails )
-
+router.get('/users', findAllUsers )
 
 
 //routes input sanitization

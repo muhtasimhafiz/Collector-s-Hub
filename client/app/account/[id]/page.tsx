@@ -75,8 +75,8 @@ export default function Page({ params }: AccountDetailProps) {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/user/${params.id}`
         );
+        console.log(response)
         const data: User = await response.json();
-
         const user_products = await fetchProducts({
           seller_id: params.id
         
@@ -114,7 +114,7 @@ export default function Page({ params }: AccountDetailProps) {
       title: "Product",
       value: "product",
       content: (
-        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
+        <div className="min-w-full flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
           <p>Product Tab</p>
           <DummyContent products={products} />
         </div>
@@ -144,7 +144,7 @@ export default function Page({ params }: AccountDetailProps) {
       title: "Pending Bids",
       value: "pending_bids",
       content: (
-        <div className=" flex flex-col justify-center w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
+        <div className=" flex flex-col justify-center min-w-full pt-4 overflow-hidden relative h-full rounded-2xl text-xl md:text-4xl font-bold text-black bg-white shadow-sm border-2">
           <p>Pending Bids</p>
           <PendingBids user={account} />
         </div>
@@ -217,7 +217,7 @@ export default function Page({ params }: AccountDetailProps) {
   };
 
   return (
-    <div className="min-h-full flex flex-col container mx-auto p-4">
+    <div className="min-h-full min-w-96 flex flex-col p-4">
       <div className="flex flex-col items-center mb-8">
         <div className="relative w-32 h-32" onClick={handleImageClick}>
           <Image
@@ -232,7 +232,7 @@ export default function Page({ params }: AccountDetailProps) {
         <p className="text-gray-600">100 Followers</p>
       </div>
 
-      <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full items-start justify-start">
+      <div className="w-full h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto items-start justify-start">
         <Tabs tabs={tabs} />
       </div>
 

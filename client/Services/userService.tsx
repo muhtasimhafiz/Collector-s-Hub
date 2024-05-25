@@ -12,3 +12,15 @@ export const updateUser = (id:number,data:Partial<User>) => {
     console.error(error);
   });
 }
+
+export const fetchUsers = async () => {
+  // Add your implementation here
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json()).catch((error) => {
+    console.error(error);
+  });
+}

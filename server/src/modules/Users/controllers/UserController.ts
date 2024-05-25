@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { createUser, findUserByEmailOrUsername, getUserById, loginUser, updateUser } from '../services/userService';
 import { validationResult } from 'express-validator';
+import { User } from '../models/User';
 
 /**
  * HTTP POST handler for creating a new user.
@@ -77,6 +78,16 @@ export const getuserDetails = async (req: Request, res: Response) => {
   } catch (error:any) {
     res.status(500).json({ message: "Failed to get user details", error: error.message });
   }
+}
+
+export const findAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.findAll();
+    res.status(200).json(users);
+  } catch (error:any) {
+    res.status(500).json({ message: "Failed to get users", error: error.message });
+  }
+
 }
 
 export const updateUserDetails = async (req: Request, res: Response) => {
