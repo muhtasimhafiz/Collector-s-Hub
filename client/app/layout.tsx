@@ -34,14 +34,14 @@ export default function RootLayout({
       <body
       
         className={cn(
-          "min-h-screen bg-background  font-sans antialiased flex flex-col justify-center items-center bg-gradient-to-r from-neutral-50 to-stone-400",
+          "pt-16 min-h-screen bg-background  font-sans antialiased flex flex-col justify-center items-center bg-gradient-to-r from-neutral-50 to-stone-400",
           fontSans.variable
         )}
       >
         <Provider>
           {/* <Navbar/> */}
           <NavBar />
-          <div className="pt-20 min-h-full min-w-full flex-col items-center justify-center align-center">
+          <div className="flex-grow container mx-auto p-4">
             {children}
           </div>
           <Toaster />

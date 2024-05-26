@@ -9,17 +9,21 @@ const ReelContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  // border-radius: 8px;
+  // border: 1px solid #ccc;
 `;
 
 const VideoCard = styled.div`
   width: 300px;
   margin: 20px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid black;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
   position: relative;
+  background: linear-gradient(110deg, black 45%, #1e2631 55%, black);
+  color: white;
 `;
 
 const VideoElement = styled.video`
@@ -118,14 +122,23 @@ const ProductReel = ({ videos }: { videos: IVideo[] }) => {
           muted
         />
         <ProductInfo>
-          <ProductImage
-            src={videos[currentIndex].product.image}
-            alt={videos[currentIndex].product.name}
-          />
+          <div className="flex flex-row justify-between">
+            <ProductImage
+              src={videos[currentIndex].product.image}
+              alt={videos[currentIndex].product.name}
+            />
+            <button
+              onClick={handleNextButtonClick}
+              className="inline-flex h-6 animate-shimmer items-center justify-center rounded-md border border-slate-600 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+            >
+              Next
+            </button>
+          </div>
           <ProductDetails>
             <Link href={`/product/${videos[currentIndex].product.id}`}>
               <ProductName>{videos[currentIndex].product.name}</ProductName>
             </Link>
+
             <ProductDescription>
               {videos[currentIndex].product.description}
             </ProductDescription>
@@ -133,7 +146,8 @@ const ProductReel = ({ videos }: { videos: IVideo[] }) => {
           </ProductDetails>
         </ProductInfo>
       </VideoCard>
-      <NextButton onClick={handleNextButtonClick}>Next</NextButton>
+
+      {/* <NextButton onClick={handleNextButtonClick}>Next</NextButton> */}
     </ReelContainer>
   );
 };

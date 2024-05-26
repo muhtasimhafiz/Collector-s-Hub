@@ -6,29 +6,21 @@ import { AuthContext } from "@/hooks/auth/AuthProvider";
 import { Boxes } from "@/components/ui/background-boxes";
 import { cn } from "@/utils/cn";
 import {
-  CardBody,
   CardContainer,
-  CardItem,
 } from "@/components/ui/3d-card-landingPage";
 import Link from "next/link";
-import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { IProduct } from "@/types/product";
 import { fetchProducts } from "@/Services/products/product";
-import ProductCard from "@/components/product/productCardItem";
 import Multiloader from "@/components/ui/Multiloader";
 import ProductLandingPageCard from "@/components/product/productLandingPageCard";
 // import { card } from "";
 import Stream from "@/components/streams/page";
-import { BackgroundBeams } from "@/components/ui/background-beams";
 import { FlipWords } from "@/components/ui/flip-words";
 import { fetchUsers } from "@/Services/userService";
-import { set } from "zod";
 import UserCard from "@/components/ui/UserCard";
 import { User } from "@/types/user";
-import { AwardIcon } from "lucide-react";
 import { fetchVideos } from "@/Services/videoService";
 import { IVideo } from "@/types/video";
-import VideoComponent from "@/components/video/VideoComponent";
 import ProductReel from "@/components/video/ProductReel";
 
 export default function Home() {
@@ -122,17 +114,7 @@ export default function Home() {
                 ))}
             </div>
           </div>
-
-          {/* Video Reels */}
-          {/* {reels.length > 0 && (
-            <div className="w-full flex flex-col justify-center align-center pt-10">
-              <h2 className="font-bold text-lg mb-2">Product Reels</h2>
-              <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
-                <VideoComponent user_id={null} />
-              </div>
-            </div>
-          )} */}
-          {/* Product Listing page */}
+          
           <div className="w-full pt-10">
             <h2 className="font-bold text-lg mb-2">Products</h2>
             <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
