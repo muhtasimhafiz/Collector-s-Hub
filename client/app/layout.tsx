@@ -32,15 +32,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+      
         className={cn(
-          "min-h-screen bg-background  font-sans antialiased flex flex-col justify-center items-center",
+          "min-h-screen bg-background  font-sans antialiased flex flex-col justify-center items-center bg-gradient-to-r from-neutral-50 to-stone-400",
           fontSans.variable
         )}
       >
         <Provider>
           {/* <Navbar/> */}
           <NavBar />
-          <div className="pt-20 min-h-full flex-col items-center justify-center align-center">
+          <div className="pt-20 min-h-full min-w-full flex-col items-center justify-center align-center">
             {children}
           </div>
           <Toaster />

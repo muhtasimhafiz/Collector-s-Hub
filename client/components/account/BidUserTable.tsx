@@ -80,18 +80,12 @@ export default function BidTable({ user }: { user: User }) {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchPlacedBids(user.id);
-      if (data.error) {
-        // toast({
-        //   title: "Failed to fetch bids.",
-        //   status: "error",
-        //   duration: 3000,
-        //   isClosable: true,
-        // });
-        toast.error("Failed to fetch your bids.");
-        return;
+      try{
+        const data = await fetchPlacedBids(user.id);
+        setBids(data);
+      }catch (error: any) {
+        console.log(error.message);
       }
-      setBids(data);
     };
 
     fetchData();

@@ -48,7 +48,7 @@ const ProductLandingPageCard = ({
   const [bidding, setBidding] = useState(false);
   const [openBuyModal, setOpenBuyModal] = useState(false);
   const [product_bid, setProductBid] = useState<IProductBid | null>(null);
-  console.log(highestBid);
+
   useEffect(() => {
     if (product.bidding && product.bids && product.bids.length > 0) {
       const bidder = product.bids?.reduce((prev, current) => {
@@ -69,8 +69,9 @@ const ProductLandingPageCard = ({
   const updateBidder = (bidder: User) => {
     setHighestBidder(bidder);
   };
+  
   return (
-    <CardBody className="h-25 sm:30 sm:20 sm:50 bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1]  sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
+    <CardBody className="h-25 w-48 bg-gradient-to-r from-blue-200 to-cyan-200  relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1]  sm:w-[15rem] md:w-[14rem] p-2 border rounded-xl">
       <CardItem
         translateZ="50"
         className="text font-bold text-neutral-600 dark:text-white"

@@ -112,14 +112,14 @@ export default function BidTable({ user }: { user: User }) {
         <Multiloader run={loading} />
       ) : (
         <>
-          <Button
+          {/* <Button
             size="md"
             colorScheme="green"
             onClick={() => handleAction("bulkApprove", selectedBids)}
             mb={4} // Add some margin to separate the button from the table
           >
             Approve All Selected
-          </Button>
+          </Button> */}
           <TableContainer>
             <Table variant="simple">
               <Thead>

@@ -42,11 +42,24 @@ const ProductDetail = ({ params }: ProductDetailProps) => {
     getProduct();
   }, [params.id]);
 
+  const fetchProduct = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/product/${params.id}`
+      );
+      const data: ProductDetail = await response.json();
+      setProduct(data);
+    } catch (error: any) {
+      console.log(error.message);
+      // console.error(error);
+    }
+  }
+
   return (
     product && (
 <div className="h-screen w-full flex flex-col sm:flex-row items-center justify-center">
   <CardContainer className="self-start">
-    <ProductCard product={product} />
+    <ProductCard product={product} updateProduct={fetchProduct} />
   </CardContainer>
   <section className="h-200 w-full sm:w-1/2 overflow-y-auto scrollbar-hide flex items-center">
     <ProductReviews product_id={params.id} reviews={product.reviews} />

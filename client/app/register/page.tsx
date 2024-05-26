@@ -26,9 +26,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useContext, useEffect, useState } from "react";
-import { login, register } from "../../Services/auth/authService";
+import { register } from "../../Services/auth/authService";
+import { login as loginHandler } from "../../Services/auth/authService";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
+import { toast } from "react-hot-toast";
 
 const formSchema = z
   .object({
@@ -63,6 +65,8 @@ export default function Page({ switchToLogin }: PageProps) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
+  const {login } = useContext(AuthContext);
+
   const loaderOption = {
     animationData: loader,
     loop: open == true ? false : true,
@@ -90,12 +94,24 @@ export default function Page({ switchToLogin }: PageProps) {
         password: values.password,
         email: values.email,
       });
-      console.log(console.log(data));
+
+      if(data.message){
+        setLoading(false);
+
+        console.log(data.message);
+        toast.error(data.message);
+        return;
+      }
+      const response = await loginHandler( values.username, values.password);
+      // console.log(console.log(data));
+      login(response.user, response.token);
       setOpen(false);
       setLoading(false);
+      toast.success("Registration successful");
       router.push("/");
     } catch (error: any) {
       setLoading(false);
+      toast.error("retry again");
       console.log(error.message);
     }
   };

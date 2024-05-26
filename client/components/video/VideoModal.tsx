@@ -10,6 +10,7 @@ interface VideoModalProps {
 
 const VideoModal: React.FC<VideoModalProps> = ({ videos, initialIndex, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +35,8 @@ const VideoModal: React.FC<VideoModalProps> = ({ videos, initialIndex, onClose }
     } else {
       setCurrentIndex(0); // Loop back to the first video
     }
+    setIsPlaying(false); // Pause the video before changing
+    setTimeout(() => setIsPlaying(true), 100); // Resume playing after the state update
   };
 
   return (
@@ -54,11 +57,11 @@ const VideoModal: React.FC<VideoModalProps> = ({ videos, initialIndex, onClose }
         {videos.map((video, index) => (
           <div
             key={index}
-            className={`${index === currentIndex ? 'block' : 'hidden'} w-full h-full`}
+            className={`absolute inset-0 ${index === currentIndex ? 'block' : 'hidden'} w-full h-full`}
           >
             <ReactPlayer
               url={video.url}
-              playing={true}
+              playing={isPlaying && index === currentIndex}
               controls={true}
               width="100%"
               height="100%"

@@ -127,4 +127,9 @@ Product.hasMany(Video, {
   as: 'videos'
 });
 
+Video.belongsTo(Product, {
+  foreignKey: 'product_id',
+  as: 'product'
+});
+
 export default Video;

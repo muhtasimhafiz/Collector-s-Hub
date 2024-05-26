@@ -149,18 +149,14 @@ export default function Page() {
     try {
       setLoading(true);
       values.seller_id = user?.id ?? 0;
-      if(values.bidding){
+      if (values.bidding) {
         values.quantity = 1;
       }
-      try {
-        if (user) {
-          let data = await cldUpload(values.image, user.id);
-          values.image = data.secure_url;
-        }
-        const product = await createProduct(values);
-      } catch (error) {
-        console.error("Error uploading image to Cloudinary:", error);
+      if (user) {
+        let data = await cldUpload(values.image, user.id);
+        values.image = data.secure_url;
       }
+      const product = await createProduct(values);
 
       setLoading(false);
       router.push(`/product/${product.id}`);
@@ -313,7 +309,17 @@ export default function Page() {
               )}
             />
             <section>
-              <Button type="submit">Submit</Button>
+              {loading == true ? (
+                <Button
+                  onClick={() => {
+                    console.log("not Uploading");
+                  }}
+                >
+                  Uploading...
+                </Button>
+              ) : (
+                <Button type="submit">Submit</Button>
+              )}
             </section>
           </form>
         </Form>

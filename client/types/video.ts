@@ -8,6 +8,8 @@ export interface IVideo {
   product_id?: number;
   caption?: string;
 
+
+  product?:IProduct;
   deleted: boolean;
   deleted_at?: Date | null;
   deleted_by?: number | null;

@@ -1,11 +1,29 @@
 import { Request, Response } from 'express';
 import VideoService from './VideoService';
+import { User } from '../Users/models/User';
+import { Product } from '../Products/models/Product';
 
 
 class VideoController {
   async getAllVideos(req: Request, res: Response) {
     try {
-      const videos = await VideoService.findAll(req,req.query);
+      const videos = await VideoService.findAll(req,
+        {
+          where: req.query,
+          include: [
+            {
+              model: User,
+              as: 'user'
+            },
+            {
+              model: Product,
+              as: 'product',
+              required: false,
+            }
+          ]
+        } 
+        
+      );
       res.json(videos);
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });

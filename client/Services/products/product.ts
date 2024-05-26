@@ -42,7 +42,7 @@ interface ProductCategories_ProductCreation {
 interface ProductCreation extends Omit<IProduct, 'id'> {
   category_id: ProductCategories_ProductCreation[];
 }
-export const createProduct = async (product: ProductCreation) => {
+export const createProduct = async (product: Partial<IProduct>) => {
   // Add your implementation here
   const token = localStorage.getItem("token");
   try {

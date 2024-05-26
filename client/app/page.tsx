@@ -29,6 +29,7 @@ import { AwardIcon } from "lucide-react";
 import { fetchVideos } from "@/Services/videoService";
 import { IVideo } from "@/types/video";
 import VideoComponent from "@/components/video/VideoComponent";
+import ProductReel from "@/components/video/ProductReel";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
@@ -75,21 +76,15 @@ export default function Home() {
   const words = ["Creativity", "Posession", "Memories", "Nostalgia"];
 
   return (
-    <main className="flex min-h-full overflow-hidden flex-col gap-1 items-center justify-center p-4 md:p-24">
+    <main className="flex min-h-full min-w-full overflow-hidden flex-col gap-1 items-center justify-center p-4 md:p-24 ">
       {/* <div className="h-[50rem] w-full dark:bg-black bg-white  dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative flex items-center justify-center"> */}
       {loading ? (
         <div>
           <Multiloader run={loading} />
         </div>
       ) : (
-        <div className="w-full">
-          {/* <div className="mb-4">
-            <h1 className="text-2xl md:text-4xl font-bold text-center">
-              Welcome to our store
-            </h1>
-          </div> */}
-
-          <div className="text-4xl mx-auto font-normal text-neutral-600 dark:text-neutral-400">
+        <div className="w-full text-center">
+          <div className=" flex justify-center text-4xl mx-auto font-normal text-neutral-600 dark:text-neutral-400">
             Where passion meets
             <FlipWords words={words} /> <br />
           </div>
@@ -99,9 +94,16 @@ export default function Home() {
             <Stream />
           </div>
 
+          {reels.length > 0 && (
+            <div>
+              <h1>Product Reel</h1>
+              <ProductReel  videos={reels}/>
+            </div>
+          )}
+
           {/* user account */}
 
-          <div className="w-full">
+          <div className="w-full flex flex-col justify-center align-center pt-10">
             <h2 className="font-bold text-lg mb-2">Accounts</h2>
             <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
               {accounts.length > 0 &&
@@ -122,17 +124,16 @@ export default function Home() {
           </div>
 
           {/* Video Reels */}
-          {reels.length > 0 && (
-          <div className="w-full">
-            <h2 className="font-bold text-lg mb-2">Product Reels</h2>
-            <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
-              <VideoComponent user_id={null} />
+          {/* {reels.length > 0 && (
+            <div className="w-full flex flex-col justify-center align-center pt-10">
+              <h2 className="font-bold text-lg mb-2">Product Reels</h2>
+              <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
+                <VideoComponent user_id={null} />
+              </div>
             </div>
-
-          </div>
-          )}
+          )} */}
           {/* Product Listing page */}
-          <div className="w-full">
+          <div className="w-full pt-10">
             <h2 className="font-bold text-lg mb-2">Products</h2>
             <div className="flex justify-center flex-row flex-wrap gap-4 sm:w-full md:w-full">
               {products.length > 0 &&

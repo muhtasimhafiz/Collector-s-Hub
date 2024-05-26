@@ -33,7 +33,7 @@ class ProductService {
     }
   }
 
-   parseQueryParams = (query: any) => {
+  parseQueryParams = (query: any) => {
     const where: any = {};
     for (const key in query) {
       if (query.hasOwnProperty(key)) {
@@ -70,7 +70,7 @@ class ProductService {
     return where;
   };
 
-  async getAllProducts(req:Request): Promise<Product[]> {
+  async getAllProducts(req: Request): Promise<Product[]> {
     try {
       const query = req.query
       const where = this.parseQueryParams(query);
@@ -95,7 +95,7 @@ class ProductService {
 
       return products;
     } catch (error: any) {
-      
+
       console.log(error.message)
       throw new Error('Error retrieving products');
     }
@@ -110,10 +110,16 @@ class ProductService {
             {
               model: ProductCategory,
               through: { attributes: [] }, // This will skip the join table attributes
-              required:false
+              required: false
             },
             'seller',
-           {association: 'reviews', include: ['user'], required: false},
+            { association: 'reviews', include: ['user'], required: false },
+            {
+              model: ProductBid,
+              as: 'bids',
+              include: ['user'],
+              required: false,
+            }
           ]
         }
       );
@@ -154,8 +160,8 @@ class ProductService {
 
   async addProductCategories(product_id: number, categories: Category_id[]): Promise<void> {
     try {
-      let  categoryInstances = categories.map(category => ({
-        product_id  : product_id,
+      let categoryInstances = categories.map(category => ({
+        product_id: product_id,
         category_id: category.value
       }));
 
