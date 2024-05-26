@@ -32,16 +32,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   cldUpload,
   cldUploadVideo,
-  thumbnailUpload,
 } from "@/Services/cloudinary";
 import { updateUser } from "@/Services/userService";
 import Multiloader from "@/components/ui/Multiloader";
-import { Divide } from "lucide-react";
 import BidTable from "@/components/account/BidSellerTable";
 import { AuthContext } from "@/hooks/auth/AuthProvider";
 import BidUserTable from "@/components/account/BidUserTable";
 import TransactionTable from "@/components/account/TransactionTable";
-import VideoComponent from "@/components/video/VideoComponent";
 import ReelList from "@/components/video/ReelListComponent";
 import { createVideo, fetchVideos } from "@/Services/videoService";
 import toast from "react-hot-toast";

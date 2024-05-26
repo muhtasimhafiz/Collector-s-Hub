@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
                     <Link
-                      href="/profile"
+                      href={`/account/${user.id}`}
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                     >
                       Profile

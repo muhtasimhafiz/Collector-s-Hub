@@ -353,7 +353,7 @@ export const BuyModalComponent = ({
   const bid_id = product.highest_bid_id?? null;
 
   const BuyFormSchema = z.object({
-    quantity: product.bidding == false?z.optional() : z.coerce
+    quantity: product.bidding == false?z.any().optional() : z.coerce
       .number()
       .max(product.quantity, {
         message: "Quantity must be less than the available quantity",
